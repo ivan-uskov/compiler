@@ -2,6 +2,7 @@
 #include <sstream>
 #include <algorithm>
 #include <functional>
+#include <stdexcept>
 
 #include "lexer/Tokenizer.h"
 
@@ -11,14 +12,16 @@ using namespace std::placeholders;
 namespace Lexer
 {
     Tokenizer::Tokenizer(istream & input, ostream & errors)
-        : m_input(input)
-        , m_errors(errors)
+            : m_input(input)
+            , m_errors(errors)
     {
+        if (!scan())
+        {
+            throw invalid_argument("scan failed");
+        }
     }
 
-    //public
-
-    vector<Token> Tokenizer::getTokens() const
+    vector<Token::Token> Tokenizer::getTokens() const
     {
         return m_tokens;
     }
@@ -75,18 +78,16 @@ namespace Lexer
         return success;
     }
 
-    bool Tokenizer::parseAtom(std::string::iterator const& it)
+    bool Tokenizer::parseAtom(std::string::iterator const & it)
     {
-        return parseToken(it, m_currentLine.end() - it)      ||
-               parseRegexTokens({ it, m_currentLine.end() });
+        return parseToken(it, m_currentLine.end() - it) ||
+               parseRegexTokens({it, m_currentLine.end()});
     }
 
-    bool Tokenizer::parseRegexTokens(string const& line)
+    bool Tokenizer::parseRegexTokens(string const & line)
     {
-        auto isPatternMatches = bind(matchRegexPattern, _1, line);
         auto patterns = m_tokenPatternProvider.getRegexPatterns();
-
-        auto it = find_if(patterns.begin(), patterns.end(), [&](TokenRegexPattern const& pattern) {
+        auto it = find_if(patterns.begin(), patterns.end(), [&](TokenRegexPattern const & pattern) {
             auto result = matchRegexPattern(pattern.pattern, line);
             if (!result.empty())
             {
@@ -101,7 +102,7 @@ namespace Lexer
         return it < patterns.end();
     }
 
-    bool Tokenizer::parseToken(string::iterator const& it, size_t availableSize)
+    bool Tokenizer::parseToken(string::iterator const & it, size_t availableSize)
     {
         bool success = false;
         auto isPatternMatches = bind(patternMatches, _1, it, availableSize);
@@ -117,7 +118,7 @@ namespace Lexer
         return success;
     }
 
-    void Tokenizer::addTokenByPattern(TokenPattern const& pattern)
+    void Tokenizer::addTokenByPattern(TokenPattern const & pattern)
     {
         addToken(pattern.type, pattern.pattern);
         m_charCount += pattern.pattern.size();
@@ -125,28 +126,29 @@ namespace Lexer
 
     void Tokenizer::addEndToken()
     {
-        addToken(TokenType::END, "END");
+        addToken(Token::Type::End, "END");
     }
 
     void Tokenizer::addInvalidToken()
     {
-        addToken(TokenType::Invalid);
+        addToken(Token::Type::Invalid);
         ++m_charCount;
     }
 
-    void Tokenizer::addToken(TokenType const& type, string const& value)
+    void Tokenizer::addToken(Token::Type const & type, string const & value)
     {
         m_tokens.push_back({
-            type,
-            value,
-            m_lineCount + 1,
-            m_charCount + 1
+             type,
+             value,
+             m_lineCount + 1,
+             m_charCount + 1
         });
     }
 
     void Tokenizer::trimLine()
     {
-        while (m_charCount < m_currentLine.size() && (m_currentLine.begin()[m_charCount] == ' ' || m_currentLine.begin()[m_charCount] == '\t'))
+        while (m_charCount < m_currentLine.size() &&
+               (m_currentLine.begin()[m_charCount] == ' ' || m_currentLine.begin()[m_charCount] == '\t'))
         {
             ++m_charCount;
         }

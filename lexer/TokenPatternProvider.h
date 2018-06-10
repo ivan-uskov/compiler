@@ -1,5 +1,4 @@
 #pragma once
-#include "TokenType.h"
 #include "TokenPattern.h"
 #include "TokenRegexPattern.h"
 

@@ -1,11 +1,11 @@
 #pragma once
-#include "TokenType.h"
+#include "token/Type.h"
 
 namespace Lexer
 {
     struct TokenRegexPattern
     {
-        TokenType type;
+        Token::Type type;
         std::regex pattern;
     };
 
