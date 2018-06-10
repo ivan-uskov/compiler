@@ -114,7 +114,7 @@ std::set<Generator::TableItem> Generator::first(Rules::Table const & table, Rule
         {
             items.insert(absoluteItemIndex(row, 0));
             auto val = rule.second.front();
-            if (Rules::isLiteral(val))
+            if (Rules::isLiteral(val) && (val != item))
             {
                 auto subValues = first(table, val);
                 items.insert(subValues.begin(), subValues.end());

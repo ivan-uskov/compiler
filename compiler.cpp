@@ -23,7 +23,7 @@ int main()
             cout << token;
         }
 
-        //Parser p(Rules::get());
+        Parser p;
     }
     catch (exception const& e)
     {

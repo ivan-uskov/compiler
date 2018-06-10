@@ -6,13 +6,13 @@
 class Parser
 {
 public:
-    explicit Parser(Rules::Table const& rulesTable)
-        : rulesTable(rulesTable)
+    Parser()
     {
+        rulesTable = Rules::get();
         parseTable = Generator::buildTable(rulesTable);
     }
 
 private:
-    Rules::Table const& rulesTable;
+    Rules::Table rulesTable;
     Generator::Table parseTable;
 };
