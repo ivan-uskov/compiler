@@ -20,10 +20,12 @@ int main()
         auto tokens = tokenizer.getTokens();
         for (auto & token : tokens)
         {
-            cout << token;
+            cout << token << endl;
         }
+        cout << endl;
 
-        Parser p;
+        auto gen = Generator(Rules::get());
+        gen.printTable(cout);
     }
     catch (exception const& e)
     {

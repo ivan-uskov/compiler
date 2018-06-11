@@ -126,12 +126,12 @@ namespace Lexer
 
     void Tokenizer::addEndToken()
     {
-        addToken(Token::Type::End, "END");
+        addToken(Token::End, "End");
     }
 
     void Tokenizer::addInvalidToken()
     {
-        addToken(Token::Type::Invalid);
+        addToken(Token::Invalid);
         ++m_charCount;
     }
 

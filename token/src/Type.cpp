@@ -4,70 +4,53 @@ using namespace std;
 
 namespace Token
 {
+    bool isLiteral(Type item)
+    {
+        return (item & 0xF00u) == Literal;
+    }
+
     string tokenTypeToString(Token::Type const& type)
     {
         switch (type)
         {
-            case Token::Type::Identifier:
-                return "ident";
-            case Token::Type::StringLiteral:
-                return "'<some lit>'";
-            case Token::Type::Number:
-                return "number";
+            case Token::Root:             return "Root";
 
-            case Token::Type::String:
-                return "string";
-            case Token::Type::Return:
-                return "return";
-            case Token::Type::For:
-                return "for";
-            case Token::Type::Int:
-                return "int";
-            case Token::Type::If:
-                return "if";
+            case Token::SumExpression:    return "SE";
+            case Token::MulExpression:    return "ME";
+            case Token::ValExpression:    return "VE";
 
-            case Token::Type::And:
-                return "&&";
-            case Token::Type::Or:
-                return "||";
-            case Token::Type::Equals:
-                return "==";
+            case Token::Identifier:       return "Identifier";
+            case Token::StringLiteral:    return "StringLiteral";
+            case Token::Number:           return "Number";
 
-            case Token::Type::Comma:
-                return ",";
-            case Token::Type::Semicolon:
-                return ";";
-            case Token::Type::Assignment:
-                return "=";
-            case Token::Type::Less:
-                return "<";
-            case Token::Type::More:
-                return ">";
-            case Token::Type::OpenBrace:
-                return "{";
-            case Token::Type::CloseBrace:
-                return "}";
-            case Token::Type::OpenParenthesis:
-                return "(";
-            case Token::Type::CloseParenthesis:
-                return ")";
-            case Token::Type::Not:
-                return "!";
-            case Token::Type::Plus:
-                return "+";
-            case Token::Type::Minus:
-                return "-";
-            case Token::Type::Mult:
-                return "*";
-            case Token::Type::Div:
-                return "/";
-            case Token::Type::Mod:
-                return "%";
+            case Token::String:           return "String";
+            case Token::Return:           return "Return";
+            case Token::For:              return "For";
+            case Token::Int:              return "Int";
+            case Token::If:               return "If";
 
-            case Token::Type::End:
-                return "EOF";
-            default:
-                return "Unexpected token type";
+            case Token::And:              return "&&";
+            case Token::Or:               return "||";
+            case Token::Equals:           return "==";
+
+            case Token::Comma:            return ",";
+            case Token::Semicolon:        return ";";
+            case Token::Assignment:       return "=";
+            case Token::Less:             return "<";
+            case Token::More:             return ">";
+            case Token::OpenBrace:        return "{";
+            case Token::CloseBrace:       return "}";
+            case Token::OpenParenthesis:  return "(";
+            case Token::CloseParenthesis: return ")";
+            case Token::Not:              return "!";
+            case Token::Plus:             return "+";
+            case Token::Minus:            return "-";
+            case Token::Mult:             return "*";
+            case Token::Div:              return "/";
+            case Token::Mod:              return "%";
+
+            case Token::End:              return "End";
+            default:                            return "Unexpected token type";
         }
     }
 }

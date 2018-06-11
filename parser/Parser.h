@@ -9,7 +9,7 @@ public:
     Parser()
     {
         rulesTable = Rules::get();
-        parseTable = Generator::buildTable(rulesTable);
+        parseTable = Generator(rulesTable).getTable();
     }
 
 private:

@@ -7,37 +7,37 @@ namespace Lexer
     void TokenPatternProvider::initialize()
     {
         m_patterns = {
-                {Token::Type::String,            "string"},
-                {Token::Type::Return,            "return"},
-                {Token::Type::For,               "for"},
-                {Token::Type::Int,               "int"},
-                {Token::Type::If,                "if"},
+                {Token::String,            "string"},
+                {Token::Return,            "return"},
+                {Token::For,               "for"},
+                {Token::Int,               "int"},
+                {Token::If,                "if"},
 
-                {Token::Type::And,               "&&"},
-                {Token::Type::Or,                "||"},
-                {Token::Type::Equals,            "=="},
+                {Token::And,               "&&"},
+                {Token::Or,                "||"},
+                {Token::Equals,            "=="},
 
-                {Token::Type::Comma,             ","},
-                {Token::Type::Semicolon,         ";"},
-                {Token::Type::Assignment,        "="},
-                {Token::Type::Less,              "<"},
-                {Token::Type::More,              ">"},
-                {Token::Type::OpenBrace,        "{"},
-                {Token::Type::CloseBrace,       "}"},
-                {Token::Type::OpenParenthesis,  "("},
-                {Token::Type::CloseParenthesis, ")"},
-                {Token::Type::Not,               "!"},
-                {Token::Type::Plus,              "+"},
-                {Token::Type::Minus,             "-"},
-                {Token::Type::Mult,              "*"},
-                {Token::Type::Div,               "/"},
-                {Token::Type::Mod,               "%"}
+                {Token::Comma,             ","},
+                {Token::Semicolon,         ";"},
+                {Token::Assignment,        "="},
+                {Token::Less,              "<"},
+                {Token::More,              ">"},
+                {Token::OpenBrace,        "{"},
+                {Token::CloseBrace,       "}"},
+                {Token::OpenParenthesis,  "("},
+                {Token::CloseParenthesis, ")"},
+                {Token::Not,               "!"},
+                {Token::Plus,              "+"},
+                {Token::Minus,             "-"},
+                {Token::Mult,              "*"},
+                {Token::Div,               "/"},
+                {Token::Mod,               "%"}
         };
 
         m_regexPatterns = {
-                {Token::Type::Identifier,    regex("^([a-zA-Z]+[a-zA-Z0-9]*)(.*)$")},
-                {Token::Type::StringLiteral, regex("^(\'[^\']*\')(.*)$")},
-                {Token::Type::Number,        regex("^([0-9]+)(.*)$")}
+                {Token::Identifier,    regex("^([a-zA-Z]+[a-zA-Z0-9]*)(.*)$")},
+                {Token::StringLiteral, regex("^(\'[^\']*\')(.*)$")},
+                {Token::Number,        regex("^([0-9]+)(.*)$")}
         };
     }
 

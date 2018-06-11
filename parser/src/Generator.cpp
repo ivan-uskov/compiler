@@ -1,78 +1,197 @@
 #include <limits>
-#include <queue>
 #include <algorithm>
 #include <functional>
 
 #include "parser/Generator.h"
 
-const size_t Generator::RowWidth = 10;
-const size_t Generator::Ok = std::numeric_limits<size_t>::max();
-const size_t Generator::None = std::numeric_limits<size_t>::max() - 1;
-const size_t Generator::FirstRowIndex = std::numeric_limits<size_t>::max() - 2;
+using namespace std;
 
-Generator::Table Generator::buildTable(Rules::Table const & rules)
+Generator::Generator(Rules::Table const & t)
+        : rules(t)
 {
-    auto lexemes = getLexemes(rules);
-    auto initialItems = first(rules, Rules::Item::Root);
+    prepareLexemes();
+    buildTable();
+}
 
-    Table table;
-    table[FirstRowIndex] = getStub(lexemes);
-    table[FirstRowIndex][Rules::Item::Root] = Ok;
-    fillTableRow(rules, table[FirstRowIndex], initialItems);
-
-    std::queue<TableItem> unprocessed;
-    std::for_each(initialItems.begin(), initialItems.end(), [&](auto & item) { unprocessed.push(item); });
-
-    while (!unprocessed.empty())
-    {
-        auto item = unprocessed.front();
-        unprocessed.pop();
-
-        auto items = first2(rules, item);
-        if (items.empty())
-        {
-            table[item] = {};
-        }
-        else
-        {
-            table[item] = getStub(lexemes);
-            fillTableRow(rules, table[item], items);
-        }
-
-        std::for_each(items.begin(), items.end(), [&](auto & item) {
-            if (table.find(item) == table.end())
-            {
-                unprocessed.push(item);
-            }
-        });
-    }
-
+Generator::Table Generator::getTable() const
+{
     return table;
 }
 
-void Generator::fillTableRow(Rules::Table const& rules, TableRow & row, std::set<TableItem> const& items)
+void Generator::printTable(std::ostream & out) const
 {
-    for (auto & tableItem : items)
+    auto print = [&out](string const& str) {
+        out << str << (str.size() <= 7 ? "\t\t" : "\t");
+    };
+
+    print("State");
+    for (auto & l : lexemes)
     {
-        row[toRuleItem(rules, tableItem)] = tableItem;
+        print(Token::tokenTypeToString(l));
+    }
+    out << endl;
+    for (size_t row = 0; row < table.size() ; ++row)
+    {
+        auto stateIt = getState(row);
+        if (!stateIt)
+        {
+            print(to_string(row));
+        }
+        else
+        {
+            print(stateIt->name);
+        }
+
+        for (auto & cell : table[row])
+        {
+            if (cell.second.type == CellType::Ok)
+            {
+                print("Ok");
+            }
+            else if (cell.second.type == CellType::None)
+            {
+                print("--");
+            }
+            else if (cell.second.type == CellType::Reduce)
+            {
+                print("R" + to_string(cell.second.index));
+            }
+            else if (cell.second.type == CellType::State)
+            {
+                auto state = getState(cell.second.index);
+                if (state)
+                {
+                    print(state->name);
+                }
+            }
+        }
+        out << endl;
     }
 }
 
-Generator::TableRow Generator::getStub(Lexemes const & lexemes)
+std::optional<Generator::State> Generator::getState(size_t row) const
+{
+    auto stateIt = find_if(states.begin(), states.end(), [row](auto & item) {
+        return item.second.row == row;
+    });
+    if (stateIt == states.end())
+    {
+        return nullopt;
+    }
+
+    return stateIt->second;
+}
+
+void Generator::buildTable()
+{
+    auto initialItems = first(Token::Root);
+
+    table.emplace_back(getStub());
+    table[0][Token::Root] = TableCell(CellType::Ok);
+
+    std::queue<State> unprocessed;
+    fill(unprocessed, 0, initialItems);
+
+    while (!unprocessed.empty())
+    {
+        auto state = unprocessed.front();
+        unprocessed.pop();
+
+        processState(unprocessed, state);
+    }
+}
+
+void Generator::processState(std::queue<State> & unprocessed, State const & s)
+{
+    for (auto & item : s.items)
+    {
+        auto rule = rules[item.row];
+        auto nextIndex = item.col + 1;
+        if (rule.second.size() == nextIndex)
+        {
+            table[s.row][item.item] = TableCell(CellType::Reduce, item.row);
+        }
+        else
+        {
+            auto next = rule.second[nextIndex];
+            auto stateItem = StateItem{next, item.row, nextIndex};
+            FirstResult fr;
+            if (Token::isLiteral(next))
+            {
+                fr = first(next);
+                fr[next].insert(stateItem);
+
+            }
+            else
+            {
+                fr = prepareFirstResult();
+                fr[next].insert(stateItem);
+            }
+
+            fill(unprocessed, s.row, fr);
+        }
+    }
+}
+
+void Generator::fill(std::queue<State> & unprocessed, size_t row, FirstResult const& firstResult)
+{
+    auto buildState = [](StateItems const& stateItems) -> State {
+        string name;
+        for (auto & stateItem : stateItems)
+        {
+            name += stateItem.toString();
+        }
+        return {stateItems, name, 0};
+    };
+
+    for (auto & item : firstResult)
+    {
+        auto state = buildState(item.second);
+        if (state.name.empty())
+        {
+            continue;
+        }
+
+        auto existingStateIt = states.find(state.name);
+        if (existingStateIt == states.end())
+        {
+            state.row = table.size();
+            table.emplace_back(getStub());
+            states[state.name] = state;
+            unprocessed.push(state);
+        }
+        else
+        {
+            state.row = existingStateIt->second.row;
+        }
+        table[row][item.first] = TableCell(CellType::State, state.row);
+    }
+}
+
+Generator::TableRow Generator::getStub() const
 {
     TableRow row;
     for (auto & l : lexemes)
     {
-        row[l] = None;
+        row[l] = {};
     }
 
     return row;
 }
 
-std::set<Rules::Item> Generator::getLexemes(Rules::Table const & table)
+Generator::FirstResult Generator::prepareFirstResult() const
 {
-    std::set<Rules::Item> lexemes;
-    for (auto & rule : table)
+    FirstResult items;
+    for (auto & stubItem : getStub())
+    {
+        items[stubItem.first] = {};
+    }
+    return items;
+}
+
+void Generator::prepareLexemes()
+{
+    for (auto & rule : rules)
     {
         lexemes.insert(rule.first);
         for (auto & rightItem : rule.second)
@@ -81,68 +200,33 @@ std::set<Rules::Item> Generator::getLexemes(Rules::Table const & table)
         }
     }
 
-    lexemes.insert(Rules::Item::End);
-
-    return lexemes;
+    lexemes.insert(Token::End);
 }
 
-size_t Generator::absoluteItemIndex(size_t row, size_t col)
+Generator::FirstResult Generator::first(Token::Type item)
 {
-    return row * RowWidth + col;
-}
+    auto items = prepareFirstResult();
 
-Rules::Item Generator::toRuleItem(Rules::Table const & table, TableItem index)
-{
-    auto offset = posFromTableItem(index);
-    return table[offset.first].second[offset.second];
-}
-
-std::pair<Generator::TableItem, Generator::TableItem> Generator::posFromTableItem(TableItem index)
-{
-    TableItem rows = index / RowWidth;
-    return {rows, index - rows * RowWidth};
-};
-
-std::set<Generator::TableItem> Generator::first(Rules::Table const & table, Rules::Item item)
-{
-    std::set<TableItem> items;
-
-    for (size_t row = 0; row < table.size(); ++row)
+    for (size_t row = 0; row < rules.size(); ++row)
     {
-        auto const & rule = table[row];
+        auto const & rule = rules[row];
         if (rule.first == item)
         {
-            items.insert(absoluteItemIndex(row, 0));
             auto val = rule.second.front();
-            if (Rules::isLiteral(val) && (val != item))
+            auto stateItem = StateItem{val, row, 0};
+            items[val].insert(stateItem);
+            if (Token::isLiteral(val) && (val != item))
             {
-                auto subValues = first(table, val);
-                items.insert(subValues.begin(), subValues.end());
+                auto subValues = first(val);
+                for (auto & subItem : subValues)
+                {
+                    for (auto & i : subItem.second)
+                    {
+                        items[subItem.first].insert(i);
+                    }
+                }
             }
         }
-    }
-
-    return items;
-}
-
-std::set<Generator::TableItem> Generator::first2(Rules::Table const & table, TableItem item)
-{
-    auto pos = posFromTableItem(item);
-    auto rule = table.at(pos.first);
-    auto nextIndex = pos.second + 1;
-
-    if (nextIndex == rule.second.size())
-    {
-        return {};
-    }
-
-    std::set<TableItem> items;
-    items.insert(absoluteItemIndex(pos.first, nextIndex));
-    auto val = rule.second.at(nextIndex);
-    if (Rules::isLiteral(val))
-    {
-        auto subValues = first(table, val);
-        items.insert(subValues.begin(), subValues.end());
     }
 
     return items;

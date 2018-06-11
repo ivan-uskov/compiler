@@ -1,32 +1,80 @@
 #pragma once
 
-#include <map>
+#include <vector>
 #include <set>
+#include <map>
+#include <optional>
+#include <queue>
 #include "Rules.h"
 
 class Generator
 {
 public:
-    using TableItem = size_t;
-    using TableRow = std::map<Rules::Item, TableItem>;
-    using Table = std::map<TableItem, TableRow>;
+    enum class CellType
+    {
+        State, Reduce, None, Ok
+    };
+    struct TableCell
+    {
+        CellType type = CellType::None;
+        size_t index = 0;
 
-    static const size_t RowWidth;
-    static const size_t Ok;
-    static const size_t None;
-    static const size_t FirstRowIndex;
+        TableCell() = default;
+        explicit TableCell(CellType t, size_t i = 0) : type(t), index(i) {}
+    };
 
-    static Table buildTable(Rules::Table const & rules);
+    using TableRow = std::map<Token::Type, TableCell>;
+    using Table = std::vector<TableRow>;
+
+    explicit Generator(Rules::Table const & t);
+
+    Table getTable() const;
+    void printTable(std::ostream & out) const;
 
 private:
-    using Lexemes = std::set<Rules::Item>;
+    struct StateItem
+    {
+        Token::Type item;
+        size_t row;
+        size_t col;
 
-    static TableRow getStub(Lexemes const & lexemes);
-    static std::set<Rules::Item> getLexemes(Rules::Table const & table);
-    static size_t absoluteItemIndex(size_t row, size_t col);
-    static Rules::Item toRuleItem(Rules::Table const & table, TableItem index);
-    static std::pair<TableItem, TableItem> posFromTableItem(TableItem index);
-    static std::set<TableItem> first(Rules::Table const & table, Rules::Item item);
-    static std::set<TableItem> first2(Rules::Table const & table, TableItem item);
-    static void fillTableRow(Rules::Table const& rules, TableRow & row, std::set<TableItem> const& items);
+        bool operator < (StateItem const& rhs) const
+        {
+            return (item < rhs.item) || (row < rhs.row) || (col < rhs.col);
+        }
+
+        std::string toString() const
+        {
+            return Token::tokenTypeToString(item) + std::to_string(row) + std::to_string(col);
+        }
+    };
+
+    using StateItems = std::set<StateItem>;
+
+    struct State
+    {
+        StateItems items;
+        std::string name;
+        size_t row;
+    };
+
+    using Lexemes = std::set<Token::Type>;
+    using FirstResult = std::map<Token::Type, StateItems>;
+
+    void prepareLexemes();
+    void buildTable();
+
+    void processState(std::queue<State> & unprocessed, State const & s);
+
+    std::optional<State> getState(size_t row) const;
+    TableRow getStub() const;
+    FirstResult first(Token::Type item);
+    FirstResult prepareFirstResult() const;
+    void fill(std::queue<State> & unprocessed, size_t row, FirstResult const& firstResult);
+
+private:
+    std::map<std::string, State> states;
+    Rules::Table const& rules;
+    Lexemes lexemes;
+    Table table;
 };

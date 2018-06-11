@@ -1,27 +1,24 @@
 #pragma once
+
 #include <vector>
 #include "token/Type.h"
 
-class Rules {
+class Rules
+{
 public:
     using Item = Token::Type;
-
-    static bool isLiteral(Item item) {
-        return (item & 0xF00u) == Item::Literal;
-    }
-
-    using Table = std::vector<std::pair<Item, std::vector<Item>>>;
+    using Table = std::vector<std::pair<Token::Type, std::vector<Token::Type>>>;
 
     static Table get()
     {
         return {
-                {Item::Root,          {Item::SumExpression}},
-                {Item::SumExpression, {Item::SumExpression,    Item::Plus,          Item::MulExpression}},
-                {Item::SumExpression, {Item::MulExpression}},
-                {Item::MulExpression, {Item::MulExpression,    Item::Mult,           Item::ValExpression}},
-                {Item::MulExpression, {Item::ValExpression}},
-                {Item::ValExpression, {Item::OpenParenthesis, Item::SumExpression, Item::CloseParenthesis}},
-                {Item::ValExpression, {Item::Number}}
+                {Token::Root,          {Token::SumExpression,   Token::End}},
+                {Token::SumExpression, {Token::SumExpression,   Token::Plus,          Token::MulExpression}},
+                {Token::SumExpression, {Token::MulExpression}},
+                {Token::MulExpression, {Token::MulExpression,   Token::Mult,          Token::ValExpression}},
+                {Token::MulExpression, {Token::ValExpression}},
+                {Token::ValExpression, {Token::OpenParenthesis, Token::SumExpression, Token::CloseParenthesis}},
+                {Token::ValExpression, {Token::Number}}
         };
     }
 };
