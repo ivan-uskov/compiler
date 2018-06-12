@@ -20,8 +20,7 @@ int main()
         Tokenizer tokenizer(in, cerr);
         auto tokens = tokenizer.getTokens();
 
-        auto null = NullStream::provider();
-        Parser(null()).parse(tokens);
+        Parser(cout).parse(tokens);
     }
     catch (exception const& e)
     {

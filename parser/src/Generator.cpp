@@ -23,12 +23,12 @@ Generator::Table Generator::getTable() const
 
 void Generator::printTable(std::ostream & out) const
 {
-    for (auto & fw : followings)
+    for (auto & rule : rules)
     {
-        out << Token::tokenTypeToString(fw.first) << " : ";
-        for (auto & fwI : fw.second)
+        out << Token::tokenTypeToString(rule.first) << " -> ";
+        for (auto & item : rule.second)
         {
-            out << Token::tokenTypeToString(fwI) << " ";
+            out << Token::tokenTypeToString(item) << " ";
         }
         out << endl;
     }
