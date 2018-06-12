@@ -7,6 +7,7 @@
 #include <string>
 #include <iostream>
 #include <functional>
+#include <deque>
 
 namespace Lexer
 {
@@ -15,7 +16,7 @@ namespace Lexer
     public:
         Tokenizer(std::istream & input, std::ostream & errors);
 
-        std::vector<Token::Token> getTokens() const;
+        std::deque<Token::Token> getTokens() const;
 
     private:
         bool scan();

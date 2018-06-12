@@ -21,9 +21,15 @@ namespace Lexer
         }
     }
 
-    vector<Token::Token> Tokenizer::getTokens() const
+    deque<Token::Token> Tokenizer::getTokens() const
     {
-        return m_tokens;
+        auto d = deque<Token::Token>();
+        for (auto & t : m_tokens)
+        {
+            d.push_back(t);
+        }
+
+        return d;
     }
 
     bool Tokenizer::scan()

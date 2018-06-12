@@ -15,19 +15,19 @@ namespace Token
         {
             case Token::Root:             return "Root";
 
-            case Token::SumExpression:    return "SE";
-            case Token::MulExpression:    return "ME";
-            case Token::ValExpression:    return "VE";
+            case Token::SumExpression:    return "S";
+            case Token::MulExpression:    return "M";
+            case Token::ValExpression:    return "V";
 
-            case Token::Identifier:       return "Identifier";
-            case Token::StringLiteral:    return "StringLiteral";
-            case Token::Number:           return "Number";
+            case Token::Identifier:       return "identifier";
+            case Token::StringLiteral:    return "stringLiteral";
+            case Token::Number:           return "n";
 
-            case Token::String:           return "String";
-            case Token::Return:           return "Return";
-            case Token::For:              return "For";
-            case Token::Int:              return "Int";
-            case Token::If:               return "If";
+            case Token::String:           return "string";
+            case Token::Return:           return "return";
+            case Token::For:              return "for";
+            case Token::Int:              return "int";
+            case Token::If:               return "if";
 
             case Token::And:              return "&&";
             case Token::Or:               return "||";
@@ -49,7 +49,7 @@ namespace Token
             case Token::Div:              return "/";
             case Token::Mod:              return "%";
 
-            case Token::End:              return "End";
+            case Token::End:              return "end";
             default:                            return "Unexpected token type";
         }
     }

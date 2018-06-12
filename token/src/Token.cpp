@@ -10,4 +10,3 @@ namespace Token
         return out << tokenTypeToString(token.type) << "\t\t[" << token.value << "]\t\tat\t" << token.line << ":" << token.column;
     }
 }
-

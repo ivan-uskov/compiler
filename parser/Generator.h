@@ -26,10 +26,9 @@ public:
     using TableRow = std::map<Token::Type, TableCell>;
     using Table = std::vector<TableRow>;
 
-    explicit Generator(Rules::Table const & t);
+    explicit Generator(Rules::Table const & t, std::ostream & debug);
 
     Table getTable() const;
-    void printTable(std::ostream & out) const;
 
 private:
     struct StateItem
@@ -61,20 +60,26 @@ private:
     using Lexemes = std::set<Token::Type>;
     using FirstResult = std::map<Token::Type, StateItems>;
 
+private:
     void prepareLexemes();
+    void prepareFollowings();
+    std::set<Token::Type> prepareFollowing(Token::Type, std::set<Token::Type> & processed) const;
     void buildTable();
+    void printTable(std::ostream & out) const;
 
     void processState(std::queue<State> & unprocessed, State const & s);
 
     std::optional<State> getState(size_t row) const;
     TableRow getStub() const;
-    FirstResult first(Token::Type item);
+    FirstResult first(Token::Type item) const;
     FirstResult prepareFirstResult() const;
     void fill(std::queue<State> & unprocessed, size_t row, FirstResult const& firstResult);
 
 private:
+    std::map<Token::Type, std::set<Token::Type>> followings;
     std::map<std::string, State> states;
     Rules::Table const& rules;
     Lexemes lexemes;
     Table table;
+    std::ostream & debug;
 };

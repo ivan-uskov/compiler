@@ -12,7 +12,7 @@ public:
     static Table get()
     {
         return {
-                {Token::Root,          {Token::SumExpression,   Token::End}},
+                {Token::Root,          {Token::SumExpression}},
                 {Token::SumExpression, {Token::SumExpression,   Token::Plus,          Token::MulExpression}},
                 {Token::SumExpression, {Token::MulExpression}},
                 {Token::MulExpression, {Token::MulExpression,   Token::Mult,          Token::ValExpression}},

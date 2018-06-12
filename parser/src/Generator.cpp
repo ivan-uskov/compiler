@@ -6,11 +6,14 @@
 
 using namespace std;
 
-Generator::Generator(Rules::Table const & t)
-        : rules(t)
+Generator::Generator(Rules::Table const & t, std::ostream & d)
+    : rules(t)
+    , debug(d)
 {
     prepareLexemes();
+    prepareFollowings();
     buildTable();
+    printTable(debug);
 }
 
 Generator::Table Generator::getTable() const
@@ -20,6 +23,16 @@ Generator::Table Generator::getTable() const
 
 void Generator::printTable(std::ostream & out) const
 {
+    for (auto & fw : followings)
+    {
+        out << Token::tokenTypeToString(fw.first) << " : ";
+        for (auto & fwI : fw.second)
+        {
+            out << Token::tokenTypeToString(fwI) << " ";
+        }
+        out << endl;
+    }
+
     auto print = [&out](string const& str) {
         out << str << (str.size() <= 7 ? "\t\t" : "\t");
     };
@@ -32,14 +45,14 @@ void Generator::printTable(std::ostream & out) const
     out << endl;
     for (size_t row = 0; row < table.size() ; ++row)
     {
-        auto stateIt = getState(row);
-        if (!stateIt)
+        auto it = find_if(states.begin(), states.end(), [&](auto & item){ return item.second.row == row; });
+        if (it != states.end())
         {
-            print(to_string(row));
+            print(it->second.name);
         }
         else
         {
-            print(stateIt->name);
+            print("S" + to_string(row));
         }
 
         for (auto & cell : table[row])
@@ -109,7 +122,17 @@ void Generator::processState(std::queue<State> & unprocessed, State const & s)
         auto nextIndex = item.col + 1;
         if (rule.second.size() == nextIndex)
         {
-            table[s.row][item.item] = TableCell(CellType::Reduce, item.row);
+            if (!followings[rule.first].empty())
+            {
+                for (auto & fw : followings[rule.first])
+                {
+                    table[s.row][fw] = TableCell(CellType::Reduce, item.row);
+                }
+            }
+            else
+            {
+                table[s.row][Token::End] = TableCell(CellType::Reduce, item.row);
+            }
         }
         else
         {
@@ -203,7 +226,7 @@ void Generator::prepareLexemes()
     lexemes.insert(Token::End);
 }
 
-Generator::FirstResult Generator::first(Token::Type item)
+Generator::FirstResult Generator::first(Token::Type item) const
 {
     auto items = prepareFirstResult();
 
@@ -224,6 +247,49 @@ Generator::FirstResult Generator::first(Token::Type item)
                     {
                         items[subItem.first].insert(i);
                     }
+                }
+            }
+        }
+    }
+
+    return items;
+}
+
+void Generator::prepareFollowings()
+{
+    for (auto & r1 : rules)
+    {
+        std::set<Token::Type> processed;
+        followings[r1.first] = prepareFollowing(r1.first, processed);
+    }
+}
+
+std::set<Token::Type> Generator::prepareFollowing(Token::Type t, std::set<Token::Type> & processed) const
+{
+    std::set<Token::Type> items;
+    processed.insert(t);
+
+    for (auto & rule : rules)
+    {
+        auto ruleSize = rule.second.size();
+        for (size_t i = 0; i < ruleSize; ++i)
+        {
+            auto nextI = i + 1;
+            if ((rule.second[i] == t))
+            {
+                if (nextI < ruleSize)
+                {
+                    items.insert(rule.second[nextI]);
+                }
+                else if (rule.first ==  Token::Root)
+                {
+                    items.insert(Token::End);
+                }
+
+                if (processed.find(rule.first) == processed.end())
+                {
+                    auto newItems = prepareFollowing(rule.first, processed);
+                    items.insert(newItems.begin(), newItems.end());
                 }
             }
         }
