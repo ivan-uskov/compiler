@@ -16,6 +16,7 @@ int main()
         string input = "5 + 7 * 4";
         cout << input << endl;
         istringstream in(input);
+
         Tokenizer tokenizer(in, cerr);
         auto tokens = tokenizer.getTokens();
 
