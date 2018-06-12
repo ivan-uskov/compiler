@@ -40,18 +40,26 @@ public:
             }
             else if (next.type == Generator::CellType::None)
             {
-                throw std::logic_error(getNoneErrorMessage());
+                throw std::logic_error(getNoneErrorMessage(input.front().type));
             }
         }
     }
 
 private:
 
-    std::string getNoneErrorMessage()
+    std::string getNoneErrorMessage(Token::Type next) const
     {
         std::ostringstream out;
-        debug << "after " << Token::tokenTypeToString(tokens.top().type) << " ";
-        debug << ", got ";
+        out << "after " << Token::tokenTypeToString(tokens.top().type) << " ";
+        out << " expected ";
+        for (auto & i : parseTable[states.top()])
+        {
+            if (i.second.type != Generator::CellType::None)
+            {
+                out << Token::tokenTypeToString(i.first).c_str() << " ";
+            }
+        }
+        out << "got " << Token::tokenTypeToString(next);
 
         return out.str();
     }

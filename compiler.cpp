@@ -13,7 +13,7 @@ int main()
 {
     try
     {
-        string input = "5 + 7 * 4";
+        string input = "5 + 7 * 4 * 4";
         cout << input << endl;
         istringstream in(input);
 
