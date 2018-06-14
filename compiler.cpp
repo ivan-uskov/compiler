@@ -1,6 +1,5 @@
 #include <iostream>
 #include <sstream>
-#include <optional>
 
 #include "lexer/Tokenizer.h"
 #include "parser/Parser.h"

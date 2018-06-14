@@ -3,7 +3,7 @@
 #include <vector>
 #include <set>
 #include <map>
-#include <optional>
+#include <experimental/optional>
 #include <queue>
 #include "Rules.h"
 
@@ -60,6 +60,8 @@ private:
     using Lexemes = std::set<Token::Type>;
     using FirstResult = std::map<Token::Type, StateItems>;
 
+    using NullableState = std::experimental::optional<Generator::State>;
+
 private:
     void prepareLexemes();
     void prepareFollowings();
@@ -69,7 +71,7 @@ private:
 
     void processState(std::queue<State> & unprocessed, State const & s);
 
-    std::optional<State> getState(size_t row) const;
+    NullableState getState(size_t row) const;
     TableRow getStub() const;
     FirstResult first(Token::Type item) const;
     FirstResult prepareFirstResult() const;

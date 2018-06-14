@@ -12,12 +12,10 @@ include_directories("${PROJECT_SOURCE_DIR}")
 
 add_subdirectory(token)
 add_subdirectory(lexer)
-add_subdirectory(ast)
 add_subdirectory(parser)
 
 add_executable(${PROJECT_NAME} compiler.cpp NullStream.h)
 
 target_link_libraries(${PROJECT_NAME} token)
 target_link_libraries(${PROJECT_NAME} lexer)
-target_link_libraries(${PROJECT_NAME} ast)
 target_link_libraries(${PROJECT_NAME} parser)

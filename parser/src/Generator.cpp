@@ -82,14 +82,14 @@ void Generator::printTable(std::ostream & out) const
     }
 }
 
-std::optional<Generator::State> Generator::getState(size_t row) const
+Generator::NullableState Generator::getState(size_t row) const
 {
     auto stateIt = find_if(states.begin(), states.end(), [row](auto & item) {
         return item.second.row == row;
     });
     if (stateIt == states.end())
     {
-        return nullopt;
+        return {};
     }
 
     return stateIt->second;
