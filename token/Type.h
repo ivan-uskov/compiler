@@ -14,6 +14,20 @@ namespace Token
     static const Type MulExpression = Literal | 0x02u;
     static const Type ValExpression = Literal | 0x03u;
 
+    // testing
+    static const Type S = Literal | 0x04u;
+    static const Type A = Literal | 0x05u;
+    static const Type B = Literal | 0x06u;
+    static const Type C = Literal | 0x07u;
+    static const Type E = Literal | 0x08u;
+
+    static const Type a = NonLiteral | 0x23u;
+    static const Type b = NonLiteral | 0x24u;
+    static const Type c = NonLiteral | 0x25u;
+    static const Type i = NonLiteral | 0x26u;
+    static const Type Else = NonLiteral | 0x27u;
+    // testing end
+
     static const Type Identifier = NonLiteral | 0x01u;                 // ([a-z]+[a-z0-9]*)
     static const Type StringLiteral = NonLiteral | 0x02u;              // (\'[^\']*\')
     static const Type Number = NonLiteral | 0x03u;                     // ([0-9]+)

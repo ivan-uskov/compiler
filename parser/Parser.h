@@ -10,10 +10,10 @@
 class Parser
 {
 public:
-    explicit Parser(std::ostream & d)
+    explicit Parser(Rules::Table const& t, std::ostream & d)
         : debug(d)
     {
-        rulesTable = Rules::get();
+        rulesTable = t;
         parseTable = Generator(rulesTable, debug).getTable();
     }
 

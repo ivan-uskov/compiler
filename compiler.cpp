@@ -19,7 +19,7 @@ int main()
         Tokenizer tokenizer(in, cerr);
         auto tokens = tokenizer.getTokens();
 
-        Parser(cout).parse(tokens);
+        Parser(Rules::get(), cout).parse(tokens);
     }
     catch (exception const& e)
     {

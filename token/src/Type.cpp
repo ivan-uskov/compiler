@@ -49,6 +49,20 @@ namespace Token
             case Token::Div:              return "/";
             case Token::Mod:              return "%";
 
+            // testing
+            case Token::S:                return "S";
+            case Token::A:                return "A";
+            case Token::B:                return "B";
+            case Token::C:                return "C";
+            case Token::E:                return "E";
+
+            case Token::a:                return "a";
+            case Token::b:                return "b";
+            case Token::c:                return "c";
+            case Token::i:                return "i";
+            case Token::Else:             return "else";
+            // testing end
+
             case Token::End:              return "end";
             default:                            return "Unexpected token type";
         }
