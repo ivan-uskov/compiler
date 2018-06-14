@@ -85,7 +85,6 @@ private:
     FirstPlusResult firstPlus(Token::Type const& item) const;
     FirstResult prepareFirstResult() const;
     void fill(std::queue<State> & unprocessed, size_t row, FirstPlusResult const& frp);
-    Optional<size_t> getEmpty(Token::Type const& t, size_t i) const;
 
 private:
     std::map<Token::Type, std::set<Token::Type>> followings;

@@ -39,7 +39,7 @@ void Generator::printTable(std::ostream & out) const
     }
 
     auto print = [&out](string const& str) {
-        out << str << (str.size() < 4 ? "\t\t" : "\t");
+        out << str << "\t";
     };
 
     print("-");
@@ -158,11 +158,10 @@ void Generator::processState(std::queue<State> & unprocessed, State const & s)
             frp.fr[next].insert(stateItem);
 
             auto prev = next;
-            size_t col = nextIndex;
-            for (; getEmpty(prev, 15) && (col < rule.second.size()); ++col)
+            for (size_t col = nextIndex + 1; empties.at(prev) && (col < rule.second.size()); ++col)
             {
                 auto curr = rule.second[col];
-                frp.reduces[*getEmpty(next, 2)].insert(curr);
+                frp.reduces[*empties.at(next)].insert(curr);
                 if (Token::isLiteral(curr) && (curr != rule.first))
                 {
                     auto subValues = firstPlus(curr);
@@ -170,14 +169,14 @@ void Generator::processState(std::queue<State> & unprocessed, State const & s)
                     {
                         for (auto & i : subItem.second)
                         {
-                            frp.reduces[*getEmpty(next, 3)].insert(subItem.first);
+                            frp.reduces[*empties.at(next)].insert(subItem.first);
                         }
                     }
                     for (auto & rr : subValues.reduces)
                     {
                         for (auto & rrr : rr.second)
                         {
-                            frp.reduces[*getEmpty(next, 4)].insert(rrr);
+                            frp.reduces[*empties.at(next)].insert(rrr);
                         }
                     }
                 }
@@ -300,10 +299,10 @@ Generator::FirstPlusResult Generator::firstPlus(Token::Type const& item) const
             }
 
             auto prev = val;
-            for (size_t col = 1; getEmpty(prev, 6) && (col < rule.second.size()); ++col)
+            for (size_t col = 1; empties.at(prev) && (col < rule.second.size()); ++col)
             {
                 auto curr = rule.second[col];
-                res.reduces[*getEmpty(val, 7)].insert(curr);
+                res.reduces[*empties.at(val)].insert(curr);
                 if (Token::isLiteral(curr) && (curr != item))
                 {
                     auto subValues = first(curr);
@@ -311,7 +310,7 @@ Generator::FirstPlusResult Generator::firstPlus(Token::Type const& item) const
                     {
                         for (auto & i : subItem.second)
                         {
-                            res.reduces[*getEmpty(val, 8)].insert(subItem.first);
+                            res.reduces[*empties.at(val)].insert(subItem.first);
                         }
                     }
                 }
@@ -414,13 +413,4 @@ void Generator::prepareEmpties()
             empties[rules[i].first] = i;
         }
     }
-}
-Generator::Optional<size_t> Generator::getEmpty(Token::Type const& t, size_t i) const
-{
-    if (empties.find(t) == empties.end())
-    {
-        throw logic_error(Token::tokenTypeToString(t) + " not found, empties size: " + to_string(empties.size()) + " under " + to_string(i));
-    }
-
-    return empties.at(t);
 }
