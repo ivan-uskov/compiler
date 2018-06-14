@@ -12,6 +12,7 @@ int main()
 {
     try
     {
+/*
         string input = "5 + 7 * 4 * 4";
         cout << input << endl;
         istringstream in(input);
@@ -19,6 +20,7 @@ int main()
         Tokenizer tokenizer(in, cerr);
         auto tokens = tokenizer.getTokens();
         Parser(Rules::get(), cout).parse(tokens);
+        cout << endl;
 
         auto r1 = Rules::Table{
             {Token::Root, {Token::S}},
@@ -33,7 +35,8 @@ int main()
             {Token::i}, {Token::Plus}, {Token::i}, {Token::Else}, {Token::i}, {Token::Semicolon}, {Token::End}
         };
         Parser(r1, cout).parse(t1);
-
+        cout << endl;
+*/
         auto r2 = Rules::Table{
                 {Token::Root, {Token::S}},
                 {Token::S, {Token::A, Token::B, Token::C}},

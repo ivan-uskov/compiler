@@ -6,3 +6,5 @@ add_library(${PROJECT_NAME}
     src/Token.cpp Token.h
     src/Type.cpp Type.h
 )
+
+target_link_libraries(${PROJECT_NAME} token)

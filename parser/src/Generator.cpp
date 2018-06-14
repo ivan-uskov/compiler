@@ -2,6 +2,8 @@
 #include <algorithm>
 #include <functional>
 
+#include <iostream>
+
 #include "parser/Generator.h"
 
 using namespace std;
@@ -11,6 +13,7 @@ Generator::Generator(Rules::Table const & t, std::ostream & d)
     , debug(d)
 {
     prepareLexemes();
+    prepareEmpties();
     prepareFollowings();
     buildTable();
     printTable(debug);
@@ -23,8 +26,10 @@ Generator::Table Generator::getTable() const
 
 void Generator::printTable(std::ostream & out) const
 {
-    for (auto & rule : rules)
+    for (size_t i = 0; i < rules.size(); ++i)
     {
+        auto rule = rules[i];
+        out << i << " ";
         out << Token::tokenTypeToString(rule.first) << " -> ";
         for (auto & item : rule.second)
         {
@@ -34,9 +39,10 @@ void Generator::printTable(std::ostream & out) const
     }
 
     auto print = [&out](string const& str) {
-        out << str << (str.size() <= 7 ? "\t\t" : "\t");
+        out << str << (str.size() < 4 ? "\t\t" : "\t");
     };
 
+    print("-");
     print("State");
     for (auto & l : lexemes)
     {
@@ -45,6 +51,7 @@ void Generator::printTable(std::ostream & out) const
     out << endl;
     for (size_t row = 0; row < table.size() ; ++row)
     {
+        print("S" + to_string(row));
         auto it = find_if(states.begin(), states.end(), [&](auto & item){ return item.second.row == row; });
         if (it != states.end())
         {
@@ -52,7 +59,7 @@ void Generator::printTable(std::ostream & out) const
         }
         else
         {
-            print("S" + to_string(row));
+            print("--");
         }
 
         for (auto & cell : table[row])
@@ -97,7 +104,7 @@ Generator::NullableState Generator::getState(size_t row) const
 
 void Generator::buildTable()
 {
-    auto initialItems = first(Token::Root);
+    auto initialItems = firstPlus(Token::Root);
 
     table.emplace_back(getStub());
     table[0][Token::Root] = TableCell(CellType::Ok);
@@ -138,25 +145,51 @@ void Generator::processState(std::queue<State> & unprocessed, State const & s)
         {
             auto next = rule.second[nextIndex];
             auto stateItem = StateItem{next, item.row, nextIndex};
-            FirstResult fr;
+            FirstPlusResult frp;
             if (Token::isLiteral(next))
             {
-                fr = first(next);
-                fr[next].insert(stateItem);
-
+                frp = firstPlus(next);
             }
             else
             {
-                fr = prepareFirstResult();
-                fr[next].insert(stateItem);
+                frp.fr = prepareFirstResult();
             }
 
-            fill(unprocessed, s.row, fr);
+            frp.fr[next].insert(stateItem);
+
+            auto prev = next;
+            size_t col = nextIndex;
+            for (; getEmpty(prev, 15) && (col < rule.second.size()); ++col)
+            {
+                auto curr = rule.second[col];
+                frp.reduces[*getEmpty(next, 2)].insert(curr);
+                if (Token::isLiteral(curr) && (curr != rule.first))
+                {
+                    auto subValues = firstPlus(curr);
+                    for (auto & subItem : subValues.fr)
+                    {
+                        for (auto & i : subItem.second)
+                        {
+                            frp.reduces[*getEmpty(next, 3)].insert(subItem.first);
+                        }
+                    }
+                    for (auto & rr : subValues.reduces)
+                    {
+                        for (auto & rrr : rr.second)
+                        {
+                            frp.reduces[*getEmpty(next, 4)].insert(rrr);
+                        }
+                    }
+                }
+                prev = curr;
+            }
+
+            fill(unprocessed, s.row, frp);
         }
     }
 }
 
-void Generator::fill(std::queue<State> & unprocessed, size_t row, FirstResult const& firstResult)
+void Generator::fill(std::queue<State> & unprocessed, size_t row, FirstPlusResult const& frp)
 {
     auto buildState = [](StateItems const& stateItems) -> State {
         string name;
@@ -167,7 +200,7 @@ void Generator::fill(std::queue<State> & unprocessed, size_t row, FirstResult co
         return {stateItems, name, 0};
     };
 
-    for (auto & item : firstResult)
+    for (auto & item : frp.fr)
     {
         auto state = buildState(item.second);
         if (state.name.empty())
@@ -188,6 +221,14 @@ void Generator::fill(std::queue<State> & unprocessed, size_t row, FirstResult co
             state.row = existingStateIt->second.row;
         }
         table[row][item.first] = TableCell(CellType::State, state.row);
+    }
+
+    for (auto & r : frp.reduces)
+    {
+        for (auto & rr : r.second)
+        {
+            table[row][rr] = TableCell(CellType::Reduce, r.first);
+        }
     }
 }
 
@@ -224,6 +265,62 @@ void Generator::prepareLexemes()
     }
 
     lexemes.insert(Token::End);
+}
+
+Generator::FirstPlusResult Generator::firstPlus(Token::Type const& item) const
+{
+    FirstPlusResult res;
+    res.fr = prepareFirstResult();
+
+    for (size_t row = 0; row < rules.size(); ++row)
+    {
+        auto const & rule = rules[row];
+        if (rule.first == item && !rule.second.empty())
+        {
+            auto val = rule.second.front();
+            auto stateItem = StateItem{val, row, 0};
+            res.fr[val].insert(stateItem);
+            if (Token::isLiteral(val) && (val != item))
+            {
+                auto subValues = firstPlus(val);
+                for (auto & subItem : subValues.fr)
+                {
+                    for (auto & i : subItem.second)
+                    {
+                        res.fr[subItem.first].insert(i);
+                    }
+                }
+                for (auto & rr : subValues.reduces)
+                {
+                    for (auto & rrr : rr.second)
+                    {
+                        res.reduces[rr.first].insert(rrr);
+                    }
+                }
+            }
+
+            auto prev = val;
+            for (size_t col = 1; getEmpty(prev, 6) && (col < rule.second.size()); ++col)
+            {
+                auto curr = rule.second[col];
+                res.reduces[*getEmpty(val, 7)].insert(curr);
+                if (Token::isLiteral(curr) && (curr != item))
+                {
+                    auto subValues = first(curr);
+                    for (auto & subItem : subValues)
+                    {
+                        for (auto & i : subItem.second)
+                        {
+                            res.reduces[*getEmpty(val, 8)].insert(subItem.first);
+                        }
+                    }
+                }
+                prev = curr;
+            }
+        }
+    }
+
+    return res;
 }
 
 Generator::FirstResult Generator::first(Token::Type item) const
@@ -280,8 +377,13 @@ std::set<Token::Type> Generator::prepareFollowing(Token::Type t, std::set<Token:
                 if (nextI < ruleSize)
                 {
                     items.insert(rule.second[nextI]);
+                    auto fr = first(rule.second[nextI]);
+                    for (auto & frr : fr)
+                    {
+                        items.insert(frr.first);
+                    }
                 }
-                else if (rule.first ==  Token::Root)
+                else if (rule.first == Token::Root)
                 {
                     items.insert(Token::End);
                 }
@@ -296,4 +398,29 @@ std::set<Token::Type> Generator::prepareFollowing(Token::Type t, std::set<Token:
     }
 
     return items;
+}
+
+void Generator::prepareEmpties()
+{
+    for (auto & l : lexemes)
+    {
+        empties[l] = {};
+    }
+
+    for (size_t i = 0; i < rules.size(); ++i)
+    {
+        if (rules[i].second.empty())
+        {
+            empties[rules[i].first] = i;
+        }
+    }
+}
+Generator::Optional<size_t> Generator::getEmpty(Token::Type const& t, size_t i) const
+{
+    if (empties.find(t) == empties.end())
+    {
+        throw logic_error(Token::tokenTypeToString(t) + " not found, empties size: " + to_string(empties.size()) + " under " + to_string(i));
+    }
+
+    return empties.at(t);
 }

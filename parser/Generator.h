@@ -57,13 +57,21 @@ private:
         size_t row;
     };
 
+    template<typename T>
+    using Optional = std::experimental::optional<T>;
+    using NullableState = Optional<Generator::State>;
+
     using Lexemes = std::set<Token::Type>;
     using FirstResult = std::map<Token::Type, StateItems>;
-
-    using NullableState = std::experimental::optional<Generator::State>;
+    struct FirstPlusResult
+    {
+        FirstResult fr;
+        std::map<size_t, std::set<Token::Type>> reduces;
+    };
 
 private:
     void prepareLexemes();
+    void prepareEmpties();
     void prepareFollowings();
     std::set<Token::Type> prepareFollowing(Token::Type, std::set<Token::Type> & processed) const;
     void buildTable();
@@ -74,8 +82,10 @@ private:
     NullableState getState(size_t row) const;
     TableRow getStub() const;
     FirstResult first(Token::Type item) const;
+    FirstPlusResult firstPlus(Token::Type const& item) const;
     FirstResult prepareFirstResult() const;
-    void fill(std::queue<State> & unprocessed, size_t row, FirstResult const& firstResult);
+    void fill(std::queue<State> & unprocessed, size_t row, FirstPlusResult const& frp);
+    Optional<size_t> getEmpty(Token::Type const& t, size_t i) const;
 
 private:
     std::map<Token::Type, std::set<Token::Type>> followings;
@@ -84,4 +94,5 @@ private:
     Lexemes lexemes;
     Table table;
     std::ostream & debug;
+    std::map<Token::Type, Optional<size_t>> empties;
 };
