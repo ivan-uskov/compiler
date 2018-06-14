@@ -233,7 +233,7 @@ Generator::FirstResult Generator::first(Token::Type item) const
     for (size_t row = 0; row < rules.size(); ++row)
     {
         auto const & rule = rules[row];
-        if (rule.first == item)
+        if (rule.first == item && !rule.second.empty())
         {
             auto val = rule.second.front();
             auto stateItem = StateItem{val, row, 0};

@@ -49,8 +49,8 @@ private:
     std::string getNoneErrorMessage(Token::Type next) const
     {
         std::ostringstream out;
-        out << "after " << Token::tokenTypeToString(tokens.top().type) << " ";
-        out << " expected ";
+        out << "after " << (tokens.empty() ? "--" : Token::tokenTypeToString(tokens.top().type)) << " expected ";
+
         for (auto & i : parseTable[states.top()])
         {
             if (i.second.type != Generator::CellType::None)

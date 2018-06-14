@@ -33,6 +33,21 @@ int main()
             {Token::i}, {Token::Plus}, {Token::i}, {Token::Else}, {Token::i}, {Token::Semicolon}, {Token::End}
         };
         Parser(r1, cout).parse(t1);
+
+        auto r2 = Rules::Table{
+                {Token::Root, {Token::S}},
+                {Token::S, {Token::A, Token::B, Token::C}},
+                {Token::A, {Token::A, Token::a}},
+                {Token::A, {}},
+                {Token::B, {Token::B, Token::b}},
+                {Token::B, {}},
+                {Token::C, {Token::c, Token::C}},
+                {Token::C, {}}
+        };
+        auto t2 = std::deque<Token::Token>{
+                {Token::a}, {Token::b}, {Token::c}, {Token::End}
+        };
+        Parser(r2, cout).parse(t2);
     }
     catch (exception const& e)
     {
