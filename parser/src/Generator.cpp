@@ -158,6 +158,13 @@ void Generator::processState(std::queue<State> & unprocessed, State const & s)
             frp.fr[next].insert(stateItem);
 
             auto prev = next;
+            if (((nextIndex + 1) == rule.second.size()) && empties.at(prev))
+            {
+                if (followings[prev].find(Token::End) != followings[prev].end())
+                {
+                    frp.reduces[*empties.at(next)].insert(Token::End);
+                }
+            }
             for (size_t col = nextIndex + 1; empties.at(prev) && (col < rule.second.size()); ++col)
             {
                 auto curr = rule.second[col];
@@ -314,6 +321,14 @@ Generator::FirstPlusResult Generator::firstPlus(Token::Type const& item) const
                         }
                     }
                 }
+                if ((col + 1) == rule.second.size())
+                {
+                    if (Token::isLiteral(curr) && empties.at(curr) && followings.at(curr).find(Token::End) != followings.at(curr).end())
+                    {
+                        res.reduces[*empties.at(val)].insert(Token::End);
+                    }
+                }
+
                 prev = curr;
             }
         }
