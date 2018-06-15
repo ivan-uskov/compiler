@@ -209,6 +209,14 @@ void Generator::fill(std::queue<State> & unprocessed, size_t row, FirstPlusResul
         return {stateItems, name, 0};
     };
 
+    for (auto & r : frp.reduces)
+    {
+        for (auto & rr : r.second)
+        {
+            table[row][rr] = TableCell(CellType::Reduce, r.first);
+        }
+    }
+
     for (auto & item : frp.fr)
     {
         auto state = buildState(item.second);
@@ -230,14 +238,6 @@ void Generator::fill(std::queue<State> & unprocessed, size_t row, FirstPlusResul
             state.row = existingStateIt->second.row;
         }
         table[row][item.first] = TableCell(CellType::State, state.row);
-    }
-
-    for (auto & r : frp.reduces)
-    {
-        for (auto & rr : r.second)
-        {
-            table[row][rr] = TableCell(CellType::Reduce, r.first);
-        }
     }
 }
 

@@ -19,7 +19,7 @@ namespace Token
             case Token::MulExpression:    return "M";
             case Token::ValExpression:    return "V";
 
-            case Token::Identifier:       return "identifier";
+            case Token::Id:               return "id";
             case Token::StringLiteral:    return "stringLiteral";
             case Token::Number:           return "n";
 
@@ -67,6 +67,8 @@ namespace Token
             case Token::login:            return "login";
             case Token::d:                return "d";
             case Token::s:                return "s";
+            case Token::While:            return "while";
+            case Token::Do:               return "do";
             // testing end
 
             case Token::End:              return "end";

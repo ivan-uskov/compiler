@@ -51,7 +51,7 @@ inline std::vector<std::pair<Rules::Table, std::deque<Token::Token>>> getCases()
                             {Token::C, {Token::c, Token::C}},
                             {Token::C, {}}
                     },
-                    {{Token::a}, {Token::b},    {Token::c}, {Token::End}}
+                    {{Token::a}, {Token::b}, {Token::c}, {Token::End}}
             },
             {
                     {
@@ -74,7 +74,19 @@ inline std::vector<std::pair<Rules::Table, std::deque<Token::Token>>> getCases()
                             {Token::Y, {}},
                             {Token::Y, {Token::Semicolon, Token::s, Token::Y}}
                     },
-                    {{Token::login}, {Token::d}, {Token::Semicolon}, {Token::s}, {Token::e}, {Token::End}}
+                    {{Token::login}, {Token::d}, {Token::Semicolon}, {Token::d}, {Token::Semicolon}, {Token::s}, {Token::Semicolon}, {Token::s}, {Token::e}, {Token::End}}
+            },
+            {
+                    {
+                            {Token::Root, {Token::S}},
+                            {Token::S, {Token::A}},
+                            {Token::S, {Token::While, Token::E, Token::Do, Token::S}},
+                            {Token::E, {Token::E, Token::Plus, Token::E}},
+                            {Token::E, {Token::Id}},
+                            {Token::A, {}},
+                            {Token::A, {Token::Id, Token::Assignment, Token::E}}
+                    },
+                    {{Token::While}, {Token::Id}, {Token::Plus}, {Token::Id}, {Token::Do}, {Token::Id}, {Token::Assignment}, {Token::Id}, {Token::End}}
             }
     };
 };

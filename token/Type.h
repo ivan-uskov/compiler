@@ -32,9 +32,11 @@ namespace Token
     static const Type login = NonLiteral | 0x23u;
     static const Type d = NonLiteral | 0x24u;
     static const Type s = NonLiteral | 0x25u;
+    static const Type While = NonLiteral | 0x26u;
+    static const Type Do = NonLiteral | 0x27u;
     // testing end
 
-    static const Type Identifier = NonLiteral | 0x01u;                 // ([a-z]+[a-z0-9]*)
+    static const Type Id = NonLiteral | 0x01u;                         // ([a-z]+[a-z0-9]*)
     static const Type StringLiteral = NonLiteral | 0x02u;              // (\'[^\']*\')
     static const Type Number = NonLiteral | 0x03u;                     // ([0-9]+)
 
