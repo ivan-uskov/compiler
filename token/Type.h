@@ -20,12 +20,18 @@ namespace Token
     static const Type B = Literal | 0x06u;
     static const Type C = Literal | 0x07u;
     static const Type E = Literal | 0x08u;
+    static const Type X = Literal | 0x09u;
+    static const Type Y = Literal | 0x0Au;
 
-    static const Type a = NonLiteral | 0x23u;
-    static const Type b = NonLiteral | 0x24u;
-    static const Type c = NonLiteral | 0x25u;
-    static const Type i = NonLiteral | 0x26u;
-    static const Type Else = NonLiteral | 0x27u;
+    static const Type a = NonLiteral | 0x1Du;
+    static const Type b = NonLiteral | 0x1Eu;
+    static const Type c = NonLiteral | 0x1Fu;
+    static const Type i = NonLiteral | 0x20u;
+    static const Type Else = NonLiteral | 0x21u;
+    static const Type e = NonLiteral | 0x22u;
+    static const Type login = NonLiteral | 0x23u;
+    static const Type d = NonLiteral | 0x24u;
+    static const Type s = NonLiteral | 0x25u;
     // testing end
 
     static const Type Identifier = NonLiteral | 0x01u;                 // ([a-z]+[a-z0-9]*)
@@ -56,10 +62,10 @@ namespace Token
     static const Type Minus = NonLiteral | 0x17u;                      // -
     static const Type Mult = NonLiteral | 0x18u;                       // *
     static const Type Div = NonLiteral | 0x19u;                        // /
-    static const Type Mod = NonLiteral | 0x20u;                        // %
+    static const Type Mod = NonLiteral | 0x1Au;                        // %
 
-    static const Type End = NonLiteral | 0x21u;                        // ^Z
-    static const Type Invalid = NonLiteral | 0x22u;
+    static const Type End = NonLiteral | 0x1Bu;                        // ^Z
+    static const Type Invalid = NonLiteral | 0x1Cu;
 
     bool isLiteral(Type item);
 

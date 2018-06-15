@@ -55,12 +55,18 @@ namespace Token
             case Token::B:                return "B";
             case Token::C:                return "C";
             case Token::E:                return "E";
+            case Token::X:                return "X";
+            case Token::Y:                return "Y";
 
             case Token::a:                return "a";
             case Token::b:                return "b";
             case Token::c:                return "c";
             case Token::i:                return "i";
             case Token::Else:             return "else";
+            case Token::e:                return "e";
+            case Token::login:            return "login";
+            case Token::d:                return "d";
+            case Token::s:                return "s";
             // testing end
 
             case Token::End:              return "end";

@@ -160,9 +160,12 @@ void Generator::processState(std::queue<State> & unprocessed, State const & s)
             auto prev = next;
             if (((nextIndex + 1) == rule.second.size()) && empties.at(prev))
             {
-                if (followings[prev].find(Token::End) != followings[prev].end())
+                for (auto & f : followings[next])
                 {
-                    frp.reduces[*empties.at(next)].insert(Token::End);
+                    if (f != next)
+                    {
+                        frp.reduces[*empties.at(next)].insert(f);
+                    }
                 }
             }
             for (size_t col = nextIndex + 1; empties.at(prev) && (col < rule.second.size()); ++col)

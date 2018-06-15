@@ -8,51 +8,89 @@
 using namespace std;
 using namespace Lexer;
 
+void test(Rules::Table const & r, deque<Token::Token> & tt)
+{
+    Parser(r, cout).parse(tt);
+    cout << endl;
+}
+
+void testWithLexer()
+{
+    string input = "5 + 7 * 4 * 4";
+    cout << input << endl;
+    istringstream in(input);
+
+    Tokenizer tokenizer(in, cerr);
+    auto tokens = tokenizer.getTokens();
+    test(Rules::get(), tokens);
+}
+
+inline std::vector<std::pair<Rules::Table, std::deque<Token::Token>>> getCases()
+{
+    return {
+            {
+                    {
+                            {Token::Root, {Token::S}},
+                            {Token::S, {Token::A, Token::Else, Token::B, Token::Semicolon}},
+                            {Token::A, {Token::i, Token::Semicolon}},
+                            {Token::A, {Token::E}},
+                            {Token::B, {Token::E}},
+                            {Token::E, {Token::E, Token::Plus, Token::i}},
+                            {Token::E, {Token::i}}
+                    },
+                    {{Token::i}, {Token::Plus}, {Token::i}, {Token::Else}, {Token::i}, {Token::Semicolon}, {Token::End}}
+            },
+            {
+                    {
+                            {Token::Root, {Token::S}},
+                            {Token::S, {Token::A, Token::B,    Token::C}},
+                            {Token::A, {Token::A, Token::a}},
+                            {Token::A, {}},
+                            {Token::B, {Token::B, Token::b}},
+                            {Token::B, {}},
+                            {Token::C, {Token::c, Token::C}},
+                            {Token::C, {}}
+                    },
+                    {{Token::a}, {Token::b},    {Token::c}, {Token::End}}
+            },
+            {
+                    {
+                            {Token::Root, {Token::S}},
+                            {Token::S, {Token::a, Token::S,    Token::b}},
+                            {Token::S, {Token::A, Token::b, Token::B, Token::c}},
+                            {Token::A, {Token::A, Token::c, Token::S}},
+                            {Token::A, {}},
+                            {Token::B, {}},
+                            {Token::B, {Token::B, Token::b}}
+                    },
+                    {{Token::a}, {Token::b}, {Token::c}, {Token::b}, {Token::End}}
+            },
+            {
+                    {
+                            {Token::Root, {Token::S}},
+                            {Token::S, {Token::login, Token::d, Token::Semicolon, Token::X, Token::e}},
+                            {Token::X, {Token::d, Token::Semicolon, Token::X}},
+                            {Token::X, {Token::s, Token::Y}},
+                            {Token::Y, {}},
+                            {Token::Y, {Token::Semicolon, Token::s, Token::Y}}
+                    },
+                    {{Token::login}, {Token::d}, {Token::Semicolon}, {Token::s}, {Token::e}, {Token::End}}
+            }
+    };
+};
+
 int main()
 {
     try
     {
-/*
-        string input = "5 + 7 * 4 * 4";
-        cout << input << endl;
-        istringstream in(input);
-
-        Tokenizer tokenizer(in, cerr);
-        auto tokens = tokenizer.getTokens();
-        Parser(Rules::get(), cout).parse(tokens);
-        cout << endl;
-
-        auto r1 = Rules::Table{
-            {Token::Root, {Token::S}},
-            {Token::S, {Token::A, Token::Else, Token::B, Token::Semicolon}},
-            {Token::A, {Token::i, Token::Semicolon}},
-            {Token::A, {Token::E}},
-            {Token::B, {Token::E}},
-            {Token::E, {Token::E, Token::Plus, Token::i}},
-            {Token::E, {Token::i}}
-        };
-        auto t1 = std::deque<Token::Token>{
-            {Token::i}, {Token::Plus}, {Token::i}, {Token::Else}, {Token::i}, {Token::Semicolon}, {Token::End}
-        };
-        Parser(r1, cout).parse(t1);
-        cout << endl;
-*/
-        auto r2 = Rules::Table{
-                {Token::Root, {Token::S}},
-                {Token::S, {Token::A, Token::B, Token::C}},
-                {Token::A, {Token::A, Token::a}},
-                {Token::A, {}},
-                {Token::B, {Token::B, Token::b}},
-                {Token::B, {}},
-                {Token::C, {Token::c, Token::C}},
-                {Token::C, {}}
-        };
-        auto t2 = std::deque<Token::Token>{
-                {Token::a}, {Token::b}, {Token::c}, {Token::End}
-        };
-        Parser(r2, cout).parse(t2);
+        testWithLexer();
+        auto cases = getCases();
+        for (auto & c : cases)
+        {
+            test(c.first, c.second);
+        }
     }
-    catch (exception const& e)
+    catch (exception const & e)
     {
         cout << "ERROR: " << e.what() << endl;
         return 1;
