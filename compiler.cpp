@@ -87,6 +87,27 @@ inline std::vector<std::pair<Rules::Table, std::deque<Token::Token>>> getCases()
                             {Token::A, {Token::Id, Token::Assignment, Token::E}}
                     },
                     {{Token::While}, {Token::Id}, {Token::Plus}, {Token::Id}, {Token::Do}, {Token::Id}, {Token::Assignment}, {Token::Id}, {Token::End}}
+            },
+            {
+                    {
+                            {Token::Root, {Token::S}},
+                            {Token::S, {Token::a, Token::A, Token::a}},
+                            {Token::S, {Token::a, Token::B, Token::b}},
+                            {Token::S, {Token::b, Token::B, Token::a}},
+                            {Token::S, {Token::b, Token::A, Token::b}},
+                            {Token::A, {Token::c}},
+                            {Token::B, {Token::c}}
+                    },
+                    {{Token::a}, {Token::c}, {Token::b}, {Token::End}}
+            },
+            {
+                    {
+                            {Token::Root, {Token::S}},
+                            {Token::S, {Token::A, Token::A}},
+                            {Token::A, {Token::a, Token::A}},
+                            {Token::A, {Token::b}}
+                    },
+                    {{Token::a}, {Token::b}, {Token::b}, {Token::End}}
             }
     };
 };
