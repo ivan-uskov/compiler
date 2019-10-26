@@ -6,7 +6,7 @@ namespace Token
 {
     bool isLiteral(Type item)
     {
-        return (item & 0xF00u) == Literal;
+        return (item & 0xF00u) == NonTerminal;
     }
 
     string tokenTypeToString(Token::Type const& type)
