@@ -1,9 +1,7 @@
 #include <iostream>
-#include <sstream>
 
 #include "lexer/Tokenizer.h"
 #include "parser/Parser.h"
-#include "NullStream.h"
 
 using namespace std;
 using namespace Lexer;
@@ -135,7 +133,7 @@ inline std::vector<std::pair<Rules::Table, std::deque<Token::Token>>> getCases()
                     {{Token::a}, {Token::a}, {Token::c}, {Token::b}, {Token::b}, {Token::End}}
             }
     };
-};
+}
 
 int main()
 {
