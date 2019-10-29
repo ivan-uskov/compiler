@@ -12,7 +12,7 @@ namespace Token
 
     static const Type SumExpression = NonTerminal | 0x01u;
     static const Type MulExpression = NonTerminal | 0x02u;
-    static const Type ValExpression = NonTerminal | 0x03u;
+    static const Type Expression = NonTerminal | 0x03u;
 
     // testing
     static const Type S = NonTerminal | 0x04u;

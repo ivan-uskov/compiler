@@ -17,7 +17,7 @@ namespace Token
 
             case Token::SumExpression:    return "S";
             case Token::MulExpression:    return "M";
-            case Token::ValExpression:    return "V";
+            case Token::Expression:       return "Expr";
 
             case Token::Id:               return "id";
             case Token::StringLiteral:    return "stringLiteral";

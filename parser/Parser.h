@@ -118,14 +118,22 @@ private:
     {
         auto rule = rulesTable[ruleIndex];
 
+        std::vector<Token::Token> ruleTokens;
+        ruleTokens.reserve(rule.second.size());
         auto popSize = rule.second.size();
         while (popSize-- > 0)
         {
+            ruleTokens.push_back(tokens.top());
             tokens.pop();
             states.pop();
         }
 
         input.push_front(Token::Token{rule.first, "" , 0, 0});
+        if (rule.action)
+        {
+            rule.action(ruleTokens);
+        }
+
         debug << "reduce" << ruleIndex << std::endl;
 
         printInfo(input);
