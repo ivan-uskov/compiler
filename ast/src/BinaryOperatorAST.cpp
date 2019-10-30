@@ -1,5 +1,7 @@
 #include "../BinaryOperatorAST.h"
 
+using namespace AST;
+
 BinaryOperatorAST::BinaryOperatorAST(std::unique_ptr<IAST> && left, std::unique_ptr<IAST> && right, Type t)
         : mLeft(std::move(left))
         , mRight(std::move(right))

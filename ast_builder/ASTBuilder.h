@@ -10,13 +10,13 @@ class ASTBuilder
 public:
     explicit ASTBuilder(std::ostream & debug);
 
-    std::unique_ptr<IAST> build(std::deque<Token::Token> & input);
+    std::unique_ptr<AST::IAST> build(std::deque<Token::Token> & input);
 
 private:
     SLR::Rules::Table getRules();
-    std::unique_ptr<IAST> getAST();
+    std::unique_ptr<AST::IAST> getAST();
 
 private:
-    std::stack<std::unique_ptr<IAST>> mStack;
+    std::stack<std::unique_ptr<AST::IAST>> mStack;
     std::ostream & mDebug;
 };

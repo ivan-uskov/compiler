@@ -5,6 +5,7 @@
 #include "slr_parser/Parser.h"
 
 using namespace SLR;
+using namespace AST;
 
 namespace
 {

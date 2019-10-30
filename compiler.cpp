@@ -3,7 +3,7 @@
 #include "lexer/Tokenizer.h"
 #include "slr_parser/Parser.h"
 #include "ast_builder/ASTBuilder.h"
-#include "ast/ASTView.h"
+#include "ast/View.h"
 #include "translation/Interpreter.h"
 #include "parser_tests.h"
 
@@ -25,7 +25,7 @@ void run(istream & in, ostream & out)
             ASTBuilder astBuilder(cerr);
             auto ast = astBuilder.build(tokens);
 
-            ASTView av(out);
+            AST::View av(out);
             ast->accept(av);
             out << endl;
 

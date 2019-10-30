@@ -3,11 +3,11 @@
 #include <stack>
 #include "ast/IASTVisitor.h"
 
-class Interpreter : public IASTVisitor
+class Interpreter : public AST::IASTVisitor
 {
 public:
-    void visit(BinaryOperatorAST const& op) override;
-    void visit(NumberAST const& op) override;
+    void visit(AST::BinaryOperatorAST const& op) override;
+    void visit(AST::NumberAST const& op) override;
 
     float getValue() const;
 

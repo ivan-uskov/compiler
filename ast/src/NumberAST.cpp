@@ -1,5 +1,7 @@
 #include "../NumberAST.h"
 
+using namespace AST;
+
 NumberAST::NumberAST(Token::Token const& t)
     : mT(t)
 {

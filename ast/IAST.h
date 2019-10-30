@@ -5,9 +5,12 @@
 
 #include "IASTVisitor.h"
 
-class IAST
+namespace AST
 {
-public:
-    virtual ~IAST() = default;
-    virtual void accept(IASTVisitor & v) const = 0;
-};
+    class IAST
+    {
+    public:
+        virtual ~IAST() = default;
+        virtual void accept(IASTVisitor & v) const = 0;
+    };
+}

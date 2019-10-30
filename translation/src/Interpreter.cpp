@@ -4,6 +4,8 @@
 
 #include <stdexcept>
 
+using namespace AST;
+
 namespace
 {
     float calc(float left, float right, BinaryOperatorAST::Type t)
