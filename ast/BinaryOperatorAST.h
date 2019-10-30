@@ -8,7 +8,9 @@ public:
     enum class Type
     {
         Sum,
-        Mul
+        Mul,
+        Div,
+        Sub
     };
     explicit BinaryOperatorAST(std::unique_ptr<IAST> && left, std::unique_ptr<IAST> && right, Type t);
     void accept(IASTVisitor & v) const override;

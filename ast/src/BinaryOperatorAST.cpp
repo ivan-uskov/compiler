@@ -33,9 +33,17 @@ std::ostream & operator << (std::ostream & out, BinaryOperatorAST::Type t)
     {
         out << "+";
     }
-    else
+    else if (t == BinaryOperatorAST::Type::Mul)
     {
         out << "*";
+    }
+    else if (t == BinaryOperatorAST::Type::Sub)
+    {
+        out << "-";
+    }
+    else if (t == BinaryOperatorAST::Type::Div)
+    {
+        out << "/";
     }
     return out;
 }

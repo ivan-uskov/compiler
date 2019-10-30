@@ -9,29 +9,34 @@
 using namespace std;
 using namespace Lexer;
 
-void testWithLexer()
+void run(istream & in, ostream & out)
 {
-    string input = "5 + 7 * 4 * 4";
-    cout << input << endl;
-    istringstream in(input);
+    while (!in.eof())
+    {
+        string line;
+        getline(in, line);
+        if (!line.empty())
+        {
+            istringstream lineStrm(line);
+            Tokenizer tokenizer(lineStrm, out);
+            auto tokens = tokenizer.getTokens();
 
-    Tokenizer tokenizer(in, cerr);
-    auto tokens = tokenizer.getTokens();
+            ASTBuilder astBuilder(cerr);
+            auto ast = astBuilder.build(tokens);
 
-    ASTBuilder pc;
-    Parser(pc.getRules(), cout).parse(tokens);
-    cout << endl;
-    auto ast = pc.getAST();
-    ASTView av(std::cout);
-    ast->accept(av);
+            ASTView av(out);
+            ast->accept(av);
+            out << endl;
+        }
+    }
 }
 
 int main()
 {
     try
     {
-        testParser();
-        testWithLexer();
+        //testParser();
+        run(cin, cout);
     }
     catch (exception const & e)
     {
