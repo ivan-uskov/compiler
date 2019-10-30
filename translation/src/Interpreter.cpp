@@ -4,6 +4,7 @@
 
 #include <stdexcept>
 
+using namespace Translation;
 using namespace AST;
 
 namespace

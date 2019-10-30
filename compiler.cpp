@@ -29,7 +29,7 @@ void run(istream & in, ostream & out)
             ast->accept(av);
             out << endl;
 
-            Interpreter interpreter;
+            Translation::Interpreter interpreter;
             ast->accept(interpreter);
             out << interpreter.getValue() << endl;
         }
