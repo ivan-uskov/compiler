@@ -5,6 +5,7 @@
 #include "ast_builder/ASTBuilder.h"
 #include "ast/View.h"
 #include "translation/Interpreter.h"
+#include "translation/LLVMCodeGenerator.h"
 #include "parser_tests.h"
 
 using namespace std;
@@ -32,6 +33,9 @@ void run(istream & in, ostream & out)
             Translation::Interpreter interpreter;
             ast->accept(interpreter);
             out << interpreter.getValue() << endl;
+
+            Translation::LLVMCodeGenerator codeGen;
+            out << codeGen.generate(*ast) << endl;
         }
     }
 }
