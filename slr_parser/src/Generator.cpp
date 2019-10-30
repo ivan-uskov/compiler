@@ -4,9 +4,10 @@
 
 #include <iostream>
 
-#include "parser/Generator.h"
+#include "slr_parser/Generator.h"
 
 using namespace std;
+using namespace SLR;
 
 Generator::Generator(Rules::Table const & t, std::ostream & d)
     : rules(t)

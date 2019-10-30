@@ -7,4 +7,4 @@ add_library(${PROJECT_NAME}
         src/ASTBuilder.cpp
         )
 
-target_link_libraries(${PROJECT_NAME} token ast parser)
+target_link_libraries(${PROJECT_NAME} token ast slr_parser)

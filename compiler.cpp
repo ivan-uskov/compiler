@@ -1,7 +1,7 @@
 #include <iostream>
 
 #include "lexer/Tokenizer.h"
-#include "parser/Parser.h"
+#include "slr_parser/Parser.h"
 #include "ast_builder/ASTBuilder.h"
 #include "ast/ASTView.h"
 #include "translation/Interpreter.h"

@@ -2,7 +2,9 @@
 #include "ast/NumberAST.h"
 #include "ast/BinaryOperatorAST.h"
 #include "ast_builder/ASTBuilder.h"
-#include "parser/Parser.h"
+#include "slr_parser/Parser.h"
+
+using namespace SLR;
 
 namespace
 {

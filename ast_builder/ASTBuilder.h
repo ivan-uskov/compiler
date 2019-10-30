@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../parser/Rules.h"
+#include "../slr_parser/Rules.h"
 #include "../ast/IAST.h"
 #include <stack>
 #include <memory>
@@ -13,7 +13,7 @@ public:
     std::unique_ptr<IAST> build(std::deque<Token::Token> & input);
 
 private:
-    Rules::Table getRules();
+    SLR::Rules::Table getRules();
     std::unique_ptr<IAST> getAST();
 
 private:

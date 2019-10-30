@@ -1,9 +1,9 @@
 #include <iostream>
 
 #include "lexer/Tokenizer.h"
-#include "parser/Parser.h"
+#include "slr_parser/Parser.h"
 
-inline std::vector<std::pair<Rules::Table, std::deque<Token::Token>>> getCases()
+inline std::vector<std::pair<SLR::Rules::Table, std::deque<Token::Token>>> getCases()
 {
     return {
             {
@@ -117,9 +117,9 @@ inline std::vector<std::pair<Rules::Table, std::deque<Token::Token>>> getCases()
 
 using namespace std;
 
-void test(Rules::Table const & r, deque<Token::Token> & tt)
+void test(SLR::Rules::Table const & r, deque<Token::Token> & tt)
 {
-    Parser(r, cout).parse(tt);
+    SLR::Parser(r, cout).parse(tt);
     cout << endl;
 }
 

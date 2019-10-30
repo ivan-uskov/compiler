@@ -1,4 +1,4 @@
-project (parser)
+project (slr_parser)
 
 set(CMAKE_CXX_STANDARD 17)
 
