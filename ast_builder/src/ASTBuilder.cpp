@@ -52,11 +52,11 @@ namespace
 Rules::Table ASTBuilder::getRules()
 {
     return  {
-            {Token::Root,          {Token::Expression}, getRootReducer(mStack)},
-            {Token::Expression, {Token::Expression,   Token::Plus,          Token::Expression}, getBinaryOperatorASTReducer(mStack, BinaryOperatorAST::Type::Sum)},
-            {Token::Expression, {Token::Expression,   Token::Minus,          Token::Expression}, getBinaryOperatorASTReducer(mStack, BinaryOperatorAST::Type::Sub)},
-            {Token::Expression, {Token::Expression,   Token::Mult,          Token::Expression}, getBinaryOperatorASTReducer(mStack, BinaryOperatorAST::Type::Mul)},
-            {Token::Expression, {Token::Expression,   Token::Div,          Token::Expression}, getBinaryOperatorASTReducer(mStack, BinaryOperatorAST::Type::Div)},
+            {Token::Root,       {Token::Expression}, getRootReducer(mStack)},
+            {Token::Expression, {Token::Expression, Token::Plus,  Token::Expression}, getBinaryOperatorASTReducer(mStack, BinaryOperatorAST::Type::Sum)},
+            {Token::Expression, {Token::Expression, Token::Minus, Token::Expression}, getBinaryOperatorASTReducer(mStack, BinaryOperatorAST::Type::Sub)},
+            {Token::Expression, {Token::Expression, Token::Mult,  Token::Expression}, getBinaryOperatorASTReducer(mStack, BinaryOperatorAST::Type::Mul)},
+            {Token::Expression, {Token::Expression, Token::Div,   Token::Expression}, getBinaryOperatorASTReducer(mStack, BinaryOperatorAST::Type::Div)},
             {Token::Expression, {Token::OpenParenthesis, Token::Expression, Token::CloseParenthesis}},
             {Token::Expression, {Token::Number}, getNumberASTReducer(mStack)}
     };
