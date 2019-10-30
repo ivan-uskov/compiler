@@ -4,6 +4,7 @@
 #include "parser/Parser.h"
 #include "ast_builder/ASTBuilder.h"
 #include "ast/ASTView.h"
+#include "translation/Interpreter.h"
 #include "parser_tests.h"
 
 using namespace std;
@@ -27,6 +28,10 @@ void run(istream & in, ostream & out)
             ASTView av(out);
             ast->accept(av);
             out << endl;
+
+            Interpreter interpreter;
+            ast->accept(interpreter);
+            out << interpreter.getValue() << endl;
         }
     }
 }

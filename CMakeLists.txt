@@ -15,6 +15,7 @@ add_subdirectory(lexer)
 add_subdirectory(parser)
 add_subdirectory(ast)
 add_subdirectory(ast_builder)
+add_subdirectory(translation)
 
 add_executable(${PROJECT_NAME} compiler.cpp parser_tests.cpp parser_tests.h)
 
@@ -23,3 +24,4 @@ target_link_libraries(${PROJECT_NAME} lexer)
 target_link_libraries(${PROJECT_NAME} parser)
 target_link_libraries(${PROJECT_NAME} ast)
 target_link_libraries(${PROJECT_NAME} ast_builder)
+target_link_libraries(${PROJECT_NAME} translation)
