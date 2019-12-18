@@ -10,7 +10,7 @@ using namespace AST;
 
 namespace
 {
-    float calc(float left, float right, BinaryOperatorAST::Type t)
+    float calc(double left, double right, BinaryOperatorAST::Type t)
     {
         if (t == BinaryOperatorAST::Type::Sum)
         {
@@ -61,10 +61,10 @@ void Interpreter::visit(ExpressionPairAST const &op)
     op.acceptRight(*this);
 }
 
-std::vector<float> Interpreter::getValues() const
+std::vector<double> Interpreter::getValues() const
 {
     auto stack = mStack;
-    std::vector<float> res;
+    std::vector<double> res;
     res.reserve(stack.size());
     while (!stack.empty())
     {

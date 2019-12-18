@@ -14,9 +14,9 @@ namespace Translation
 
         void visit(const AST::ExpressionPairAST &op) override;
 
-        std::vector<float> getValues() const;
+        std::vector<double> getValues() const;
 
     private:
-        std::stack<float> mStack;
+        std::stack<double> mStack;
     };
 }

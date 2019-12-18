@@ -29,6 +29,24 @@ namespace
     }
 
     template<typename T>
+    Rules::Action getUnaryMinusASTReducer(T & stack)
+    {
+        return [&stack](auto const& tokens) {
+            if (stack.size() < 1)
+            {
+                throw std::logic_error("too small stack for unary minus");
+            }
+
+            auto left = std::make_unique<NumberAST>(Token::Token{Token::Number, "0"});
+
+            auto right = std::move(stack.top());
+            stack.pop();
+
+            stack.emplace(new BinaryOperatorAST(std::move(left), std::move(right), BinaryOperatorAST::Type::Sub));
+        };
+    }
+
+    template<typename T>
     Rules::Action getNumberASTReducer(T & stack)
     {
         return [&stack](auto const& tokens) {
@@ -74,19 +92,19 @@ namespace
 Rules::Table ASTBuilder::getRules()
 {
     return  {
-            {Token::Root,          {Token::StatementList},                                          getRootReducer(mStack)},
-            {Token::StatementList, {Token::Statement,       Token::Semicolon,  Token::StatementList}, getExpressionListReducer(mStack)},
+            {Token::Root,          {Token::StatementList}, getRootReducer(mStack)},
+            {Token::StatementList, {Token::Statement, Token::Semicolon,  Token::StatementList}, getExpressionListReducer(mStack)},
             {Token::StatementList, {Token::Statement}},
             {Token::Statement,     {Token::Expression}},
-            {Token::Expression,    {Token::Expression,      Token::Plus,       Token::Expression1}, getBinaryOperatorASTReducer(mStack, BinaryOperatorAST::Type::Sum)},
-            {Token::Expression,    {Token::Expression,      Token::Minus,      Token::Expression1}, getBinaryOperatorASTReducer(mStack, BinaryOperatorAST::Type::Sub)},
+            {Token::Expression,    {Token::Expression, Token::Plus, Token::Expression1}, getBinaryOperatorASTReducer(mStack, BinaryOperatorAST::Type::Sum)},
+            {Token::Expression,    {Token::Expression, Token::Minus, Token::Expression1}, getBinaryOperatorASTReducer(mStack, BinaryOperatorAST::Type::Sub)},
             {Token::Expression,    {Token::Expression1}},
-            {Token::Expression1,   {Token::Expression1,     Token::Mult,       Token::Expression2}, getBinaryOperatorASTReducer(mStack, BinaryOperatorAST::Type::Mul)},
-            {Token::Expression1,   {Token::Expression1,     Token::Div,        Token::Expression2}, getBinaryOperatorASTReducer(mStack, BinaryOperatorAST::Type::Div)},
+            {Token::Expression1,   {Token::Expression1, Token::Mult, Token::Expression2}, getBinaryOperatorASTReducer(mStack, BinaryOperatorAST::Type::Mul)},
+            {Token::Expression1,   {Token::Expression1, Token::Div, Token::Expression2}, getBinaryOperatorASTReducer(mStack, BinaryOperatorAST::Type::Div)},
             {Token::Expression1,   {Token::Expression2}},
             {Token::Expression2,   {Token::OpenParenthesis, Token::Expression, Token::CloseParenthesis}},
-            {Token::Expression2,   {Token::Minus,           Token::Expression2}},
-            {Token::Expression2,   {Token::Number},                                                 getNumberASTReducer(mStack)}
+            {Token::Expression2,   {Token::Minus, Token::Expression2}, getUnaryMinusASTReducer(mStack)},
+            {Token::Expression2,   {Token::Number}, getNumberASTReducer(mStack)}
     };
 }
 

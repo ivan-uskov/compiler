@@ -71,7 +71,7 @@ namespace
     Constant *AddStringLiteral(LLVMContext & context, Module & module, std::string const& value)
     {
         Constant *pConstant = ConstantDataArray::getString(context, value, true);
-        GlobalVariable *global = new GlobalVariable(module, pConstant->getType(), true,
+        auto * global = new GlobalVariable(module, pConstant->getType(), true,
                                                     GlobalValue::InternalLinkage, pConstant, "str");
 
         Constant *index = Constant::getNullValue(IntegerType::getInt32Ty(context));

@@ -13,7 +13,7 @@ namespace AST
 
         void accept(IASTVisitor & v) const override;
 
-        float getValue() const;
+        double getValue() const;
     private:
         Token::Token mT;
     };

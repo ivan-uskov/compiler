@@ -11,9 +11,9 @@ NumberAST::NumberAST(Token::Token const& t)
     }
 }
 
-float NumberAST::getValue() const
+double NumberAST::getValue() const
 {
-    return stof(mT.value);
+    return stod(mT.value);
 }
 
 void NumberAST::accept(IASTVisitor & v) const
