@@ -13,6 +13,7 @@
 
 #include "ast/BinaryOperatorAST.h"
 #include "ast/NumberAST.h"
+#include "ast/ExpressionPairAST.h"
 
 using namespace std;
 using namespace llvm;
@@ -33,6 +34,21 @@ LLVMCodeGenerator::LLVMCodeGenerator()
 llvm::Value * Translation::LLVMCodeGenerator::getValue() const
 {
     return mStack.top();
+}
+
+std::vector<llvm::Value *> LLVMCodeGenerator::getValues() const
+{
+    auto stack = mStack;
+    std::vector<llvm::Value *> res;
+    res.reserve(stack.size());
+    while (!stack.empty())
+    {
+        res.push_back(stack.top());
+        stack.pop();
+    }
+    std::reverse(res.begin(), res.end());
+    return res;
+
 }
 
 namespace
@@ -63,6 +79,12 @@ namespace
 
         return ConstantExpr::getInBoundsGetElementPtr(pConstant->getType(), global, indices);
     }
+}
+
+void LLVMCodeGenerator::visit(const AST::ExpressionPairAST &op)
+{
+    op.acceptLeft(*this);
+    op.acceptRight(*this);
 }
 
 void LLVMCodeGenerator::visit(AST::BinaryOperatorAST const &op)
@@ -115,9 +137,12 @@ void LLVMCodeGenerator::GenerateMainDefinition(Function &fn, AST::IAST & ast)
 
     ast.accept(*this);
 
-    Constant* pFormatAddress = AddStringLiteral(*mLLVMContext, *mModule, "%lf\n");
-    std::vector<llvm::Value *> args = {pFormatAddress, getValue()};
-    m_builder.CreateCall(mPrint, args);
+    for (auto v : getValues())
+    {
+        Constant* pFormatAddress = AddStringLiteral(*mLLVMContext, *mModule, "%lf\n");
+        std::vector<llvm::Value *> args = {pFormatAddress, v};
+        m_builder.CreateCall(mPrint, args);
+    }
 
     Constant *exitCode = ConstantInt::get(*mLLVMContext, APInt(32, uint64_t(0), true));
     m_builder.CreateRet(exitCode);

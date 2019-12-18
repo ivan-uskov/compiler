@@ -1,6 +1,7 @@
 #include <stdexcept>
 #include "ast/NumberAST.h"
 #include "ast/BinaryOperatorAST.h"
+#include "ast/ExpressionPairAST.h"
 #include "ast_builder/ASTBuilder.h"
 #include "slr_parser/Parser.h"
 
@@ -50,18 +51,42 @@ namespace
             }
         };
     }
+
+    template<typename T>
+    Rules::Action getExpressionListReducer(T & stack)
+    {
+        return [&stack](auto const& tokens) {
+            if (stack.size() < 2)
+            {
+                throw std::logic_error("too small stack for expression list");
+            }
+
+            auto right = std::move(stack.top());
+            stack.pop();
+            auto left = std::move(stack.top());
+            stack.pop();
+
+            stack.emplace(new ExpressionPairAST(std::move(left), std::move(right)));
+        };
+    }
 }
 
 Rules::Table ASTBuilder::getRules()
 {
     return  {
-            {Token::Root,       {Token::Expression}, getRootReducer(mStack)},
-            {Token::Expression, {Token::Expression, Token::Plus,  Token::Expression}, getBinaryOperatorASTReducer(mStack, BinaryOperatorAST::Type::Sum)},
-            {Token::Expression, {Token::Expression, Token::Minus, Token::Expression}, getBinaryOperatorASTReducer(mStack, BinaryOperatorAST::Type::Sub)},
-            {Token::Expression, {Token::Expression, Token::Mult,  Token::Expression}, getBinaryOperatorASTReducer(mStack, BinaryOperatorAST::Type::Mul)},
-            {Token::Expression, {Token::Expression, Token::Div,   Token::Expression}, getBinaryOperatorASTReducer(mStack, BinaryOperatorAST::Type::Div)},
-            {Token::Expression, {Token::OpenParenthesis, Token::Expression, Token::CloseParenthesis}},
-            {Token::Expression, {Token::Number}, getNumberASTReducer(mStack)}
+            {Token::Root,          {Token::StatementList},                                          getRootReducer(mStack)},
+            {Token::StatementList, {Token::Statement,       Token::Semicolon,  Token::StatementList}, getExpressionListReducer(mStack)},
+            {Token::StatementList, {Token::Statement}},
+            {Token::Statement,     {Token::Expression}},
+            {Token::Expression,    {Token::Expression,      Token::Plus,       Token::Expression1}, getBinaryOperatorASTReducer(mStack, BinaryOperatorAST::Type::Sum)},
+            {Token::Expression,    {Token::Expression,      Token::Minus,      Token::Expression1}, getBinaryOperatorASTReducer(mStack, BinaryOperatorAST::Type::Sub)},
+            {Token::Expression,    {Token::Expression1}},
+            {Token::Expression1,   {Token::Expression1,     Token::Mult,       Token::Expression2}, getBinaryOperatorASTReducer(mStack, BinaryOperatorAST::Type::Mul)},
+            {Token::Expression1,   {Token::Expression1,     Token::Div,        Token::Expression2}, getBinaryOperatorASTReducer(mStack, BinaryOperatorAST::Type::Div)},
+            {Token::Expression1,   {Token::Expression2}},
+            {Token::Expression2,   {Token::OpenParenthesis, Token::Expression, Token::CloseParenthesis}},
+            {Token::Expression2,   {Token::Minus,           Token::Expression2}},
+            {Token::Expression2,   {Token::Number},                                                 getNumberASTReducer(mStack)}
     };
 }
 

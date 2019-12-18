@@ -1,6 +1,7 @@
 #include "../Interpreter.h"
 #include "ast/NumberAST.h"
 #include "ast/BinaryOperatorAST.h"
+#include "ast/ExpressionPairAST.h"
 
 #include <stdexcept>
 
@@ -54,12 +55,22 @@ void Interpreter::visit(NumberAST const& op)
     mStack.push(op.getValue());
 }
 
-float Interpreter::getValue() const
+void Interpreter::visit(ExpressionPairAST const &op)
 {
-    if (mStack.size() != 1)
-    {
-        throw std::logic_error("value not calculated");
-    }
+    op.acceptLeft(*this);
+    op.acceptRight(*this);
+}
 
-    return mStack.top();
+std::vector<float> Interpreter::getValues() const
+{
+    auto stack = mStack;
+    std::vector<float> res;
+    res.reserve(stack.size());
+    while (!stack.empty())
+    {
+        res.push_back(stack.top());
+        stack.pop();
+    }
+    std::reverse(res.begin(), res.end());
+    return res;
 }

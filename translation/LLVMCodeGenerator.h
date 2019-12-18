@@ -4,6 +4,7 @@
 #include "ast/IASTVisitor.h"
 
 #include <stack>
+#include <vector>
 
 #include "begin_llvm.h"
 #include <llvm/IR/Value.h>
@@ -23,8 +24,11 @@ namespace Translation
         void visit(AST::BinaryOperatorAST const& op) override;
         void visit(AST::NumberAST const& op) override;
 
+        void visit(const AST::ExpressionPairAST &op) override;
+
     private:
         llvm::Value * getValue() const;
+        std::vector<llvm::Value *> getValues() const;
         llvm::Function * GenerateMainDeclaration();
         void GenerateMainDefinition(llvm::Function &fn, AST::IAST & ast);
 

@@ -10,9 +10,12 @@ namespace Token
     static const Type NonTerminal = 0x200u;
     static const Type Terminal = 0x300u;
 
-    static const Type SumExpression = NonTerminal | 0x01u;
-    static const Type MulExpression = NonTerminal | 0x02u;
+    static const Type Statement = NonTerminal | 0x01u;
+    static const Type StatementList = NonTerminal | 0x02u;
     static const Type Expression = NonTerminal | 0x03u;
+    static const Type Expression1 = NonTerminal | 0x031;
+    static const Type Expression2 = NonTerminal | 0x032;
+    static const Type Expression3 = NonTerminal | 0x033;
 
     // testing
     static const Type S = NonTerminal | 0x04u;

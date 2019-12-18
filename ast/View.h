@@ -10,8 +10,11 @@ namespace AST
     public:
         explicit View(std::ostream & out);
 
-        void visit(BinaryOperatorAST const& op);
-        void visit(NumberAST const& op);
+        void visit(BinaryOperatorAST const& op) override;
+        void visit(NumberAST const& op) override;
+
+        void visit(ExpressionPairAST const &op) override;
+
     private:
         std::ostream & mOut;
     };

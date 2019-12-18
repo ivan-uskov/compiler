@@ -15,9 +15,12 @@ namespace Token
         {
             case Token::Root:             return "Root";
 
-            case Token::SumExpression:    return "S";
-            case Token::MulExpression:    return "M";
+            case Token::Statement:    return "Stmt";
+            case Token::StatementList:    return "StmtList";
             case Token::Expression:       return "Expr";
+            case Token::Expression1:      return "Expr1";
+            case Token::Expression2:      return "Expr2";
+            case Token::Expression3:      return "Expr3";
 
             case Token::Id:               return "id";
             case Token::StringLiteral:    return "stringLiteral";

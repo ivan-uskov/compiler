@@ -1,6 +1,7 @@
 #pragma once
 
 #include <stack>
+#include <vector>
 #include "ast/IASTVisitor.h"
 
 namespace Translation
@@ -11,7 +12,9 @@ namespace Translation
         void visit(AST::BinaryOperatorAST const& op) override;
         void visit(AST::NumberAST const& op) override;
 
-        float getValue() const;
+        void visit(const AST::ExpressionPairAST &op) override;
+
+        std::vector<float> getValues() const;
 
     private:
         std::stack<float> mStack;

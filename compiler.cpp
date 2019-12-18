@@ -23,7 +23,8 @@ void run(istream & in, ostream & out)
             Tokenizer tokenizer(lineStrm, out);
             auto tokens = tokenizer.getTokens();
 
-            ASTBuilder astBuilder(cerr);
+            ostringstream fakeOut;
+            ASTBuilder astBuilder(fakeOut);
             auto ast = astBuilder.build(tokens);
 
             AST::View av(out);
@@ -32,7 +33,10 @@ void run(istream & in, ostream & out)
 
             Translation::Interpreter interpreter;
             ast->accept(interpreter);
-            out << interpreter.getValue() << endl;
+            for (auto v : interpreter.getValues())
+            {
+                out << v << ";" << endl;
+            }
 
             Translation::LLVMCodeGenerator codeGen;
             out << codeGen.generate(*ast) << endl;
