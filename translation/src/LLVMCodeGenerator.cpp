@@ -31,11 +31,6 @@ LLVMCodeGenerator::LLVMCodeGenerator()
     mPrint = llvm::Function::Create(fnType, llvm::Function::ExternalLinkage, "printf", mModule.get());
 }
 
-llvm::Value * Translation::LLVMCodeGenerator::getValue() const
-{
-    return mStack.top();
-}
-
 std::vector<llvm::Value *> LLVMCodeGenerator::getValues() const
 {
     auto stack = mStack;
