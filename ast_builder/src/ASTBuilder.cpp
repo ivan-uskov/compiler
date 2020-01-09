@@ -92,45 +92,72 @@ namespace
         };
     }
 
-    template<typename T>
-    Rules::Action getVariableDeclarationASTReducer(T & stack, AST::ValueType v)
+    template<typename T, typename S>
+    Rules::Action getVariableDeclarationASTReducer(T & stack, S & scope, AST::ValueType v)
     {
-        return [&stack, v](auto const& tokens) {
+        return [&stack, &scope, v](auto const& tokens) {
             if (tokens.size() != 2)
             {
                 throw std::logic_error("invalid tokens for reduce vardecl");
             }
 
+            if (scope.find(tokens[0].value) != scope.end())
+            {
+                throw std::logic_error("variable already defined in current scope: " + Token::tokenDescription(tokens[0]));
+            }
+
+            scope[tokens[0].value] = v;
             stack.emplace(new VariableDeclarationAST(v, tokens[0]));
         };
     }
 
-    template<typename T>
-    Rules::Action getAssignmentASTReducer(T & stack)
+    template<typename T, typename S>
+    Rules::Action getAssignmentASTReducer(T & stack, S & scope)
     {
-        return [&stack](auto const& tokens) {
+        return [&stack, &scope](auto const& tokens) {
             if (tokens.size() != 3 || stack.empty())
             {
                 throw std::logic_error("invalid state for reduce assignment");
             }
 
+            auto const& id = tokens[2];
+            if (scope.find(id.value) == scope.end())
+            {
+                throw std::logic_error("assignment to a nonexistent variable: " + Token::tokenDescription(id));
+            }
+
             auto value = std::move(stack.top());
             stack.pop();
+            auto varType = scope[id.value];
+            auto argType = value->getResultType();
+            if (varType != argType)
+            {
+                throw std::logic_error(
+                        "assignment types do not match: " +
+                        AST::valueTypeToString(varType) + " <> " + AST::valueTypeToString(argType) + " " +
+                        Token::tokenDescription(id)
+                );
+            }
 
-            stack.emplace(new AssignmentAST(tokens[2], std::move(value)));
+            stack.emplace(new AssignmentAST(id, std::move(value)));
         };
     }
 
-    template<typename T>
-    Rules::Action getVariableAccessASTReducer(T & stack)
+    template<typename T, typename S>
+    Rules::Action getVariableAccessASTReducer(T & stack, S & scope)
     {
-        return [&stack](auto const& tokens) {
+        return [&stack, &scope](auto const& tokens) {
             if (tokens.size() != 1)
             {
                 throw std::logic_error("invalid tokens for reduce variable access");
             }
+            auto const& id = tokens[0];
+            if (scope.find(id.value) == scope.end())
+            {
+                throw std::logic_error("trying access to nonexistent variable: " + Token::tokenDescription(id));
+            }
 
-            stack.emplace(new VariableAccessAST(tokens[0], ValueType::Number)); //TODO: add type inference and var exist check
+            stack.emplace(new VariableAccessAST(id, scope[id.value]));
         };
     }
 
@@ -160,9 +187,9 @@ Rules::Table ASTBuilder::getRules()
             {Token::StatementList, {Token::Statement, Token::Semicolon, Token::StatementList}, getExpressionListReducer(mStack)},
             {Token::StatementList, {Token::Statement}},
 
-            {Token::Statement,     {Token::Number, Token::Id}, getVariableDeclarationASTReducer(mStack, AST::ValueType::Number)},
-            {Token::Statement,     {Token::String, Token::Id}, getVariableDeclarationASTReducer(mStack, AST::ValueType::String)},
-            {Token::Statement,     {Token::Id, Token::Equals,           Token::Expression}, getAssignmentASTReducer(mStack)},
+            {Token::Statement,     {Token::Number, Token::Id}, getVariableDeclarationASTReducer(mStack, mVariables.top(), AST::ValueType::Number)},
+            {Token::Statement,     {Token::String, Token::Id}, getVariableDeclarationASTReducer(mStack, mVariables.top(), AST::ValueType::String)},
+            {Token::Statement,     {Token::Id, Token::Equals,           Token::Expression}, getAssignmentASTReducer(mStack, mVariables.top())},
             {Token::Statement,     {Token::Id, Token::OpenParenthesis, Token::Expression, Token::CloseParenthesis}, getFunctionCallASTReducer(mStack)},
 
             {Token::Expression,    {Token::Expression, Token::Plus,     Token::Expression1}, getBinaryOperatorASTReducer(mStack, BinaryOperatorAST::Type::Sum)},
@@ -175,7 +202,7 @@ Rules::Table ASTBuilder::getRules()
             {Token::Expression2,   {Token::OpenParenthesis, Token::Expression, Token::CloseParenthesis}},
             {Token::Expression2,   {Token::Minus, Token::Expression2}, getUnaryMinusASTReducer(mStack)},
             {Token::Expression2,   {Token::NumberLiteral}, getNumberASTReducer(mStack)},
-            {Token::Expression2,   {Token::Id}, getVariableAccessASTReducer(mStack)}
+            {Token::Expression2,   {Token::Id}, getVariableAccessASTReducer(mStack,  mVariables.top())}
     };
 }
 
@@ -199,4 +226,6 @@ std::unique_ptr<IAST> ASTBuilder::build(std::deque<Token::Token> & tokens)
 
 ASTBuilder::ASTBuilder(std::ostream & debug)
     : mDebug(debug)
-{}
+{
+    mVariables.emplace();
+}

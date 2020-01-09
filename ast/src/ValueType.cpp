@@ -4,22 +4,25 @@ namespace AST
 {
     std::ostream & operator << (std::ostream & out, ValueType const& t)
     {
-        if (t == ValueType::Error)
-        {
-            out << "error";
-        }
-        if (t == ValueType::Void)
-        {
-            out << "void";
-        }
-        if (t == ValueType::Number)
-        {
-            out << "number";
-        }
-        if (t == ValueType::String)
-        {
-            out << "string";
-        }
+        out << valueTypeToString(t);
+
         return out;
+    }
+
+    std::string valueTypeToString(ValueType const& t)
+    {
+        switch (t)
+        {
+            case ValueType::Error:
+                return "error";
+            case ValueType::Void:
+                return "void";
+            case ValueType::Number:
+                return "number";
+            case ValueType::String:
+                return "string";
+            default:
+                return "";
+        }
     }
 }

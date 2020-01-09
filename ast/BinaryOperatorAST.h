@@ -22,6 +22,7 @@ namespace AST
 
         ValueType getResultType() const override;
 
+        static std::string typeToString(BinaryOperatorAST::Type t);
     private:
         std::unique_ptr<IAST> mLeft;
         std::unique_ptr<IAST> mRight;

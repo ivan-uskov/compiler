@@ -14,4 +14,5 @@ namespace Token
     };
 
     std::ostream & operator << (std::ostream & out, Token const& token);
+    std::string tokenDescription(Token const& token);
 }

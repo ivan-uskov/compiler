@@ -3,6 +3,7 @@
 #include "../slr_parser/Rules.h"
 #include "../ast/IAST.h"
 #include <stack>
+#include <map>
 #include <memory>
 
 class ASTBuilder
@@ -18,5 +19,6 @@ private:
 
 private:
     std::stack<std::unique_ptr<AST::IAST>> mStack;
+    std::stack<std::map<std::string, AST::ValueType>> mVariables;
     std::ostream & mDebug;
 };

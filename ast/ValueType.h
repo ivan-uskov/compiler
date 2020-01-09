@@ -13,4 +13,5 @@ namespace AST
     };
 
     std::ostream & operator << (std::ostream & out, ValueType const& t);
+    std::string valueTypeToString(ValueType const& t);
 }

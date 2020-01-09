@@ -8,9 +8,14 @@ BinaryOperatorAST::BinaryOperatorAST(std::unique_ptr<IAST> && left, std::unique_
         , mRight(std::move(right))
         , mType(t)
 {
-    if (mLeft->getResultType() != mRight->getResultType())
+    if (mLeft->getResultType() != ValueType::Number)
     {
-        throw std::logic_error("Invalid operand types");
+        throw std::logic_error("For operation " + typeToString(t) + " invalid left type" + valueTypeToString(mLeft->getResultType()));
+    }
+
+    if (mRight->getResultType() != ValueType::Number)
+    {
+        throw std::logic_error("For operation " + typeToString(t) + " invalid right type" + valueTypeToString(mRight->getResultType()));
     }
 
     mValueType = mLeft->getResultType();
@@ -41,26 +46,28 @@ ValueType BinaryOperatorAST::getResultType() const
     return mValueType;
 }
 
+std::string BinaryOperatorAST::typeToString(BinaryOperatorAST::Type t)
+{
+    switch (t)
+    {
+        case Type::Sum:
+            return "+";
+        case Type::Sub:
+            return "-";
+        case Type::Mul:
+            return "*";
+        case Type::Div:
+            return "/";
+        default:
+            return "";
+    }
+}
+
 namespace AST
 {
     std::ostream & operator << (std::ostream & out, BinaryOperatorAST::Type t)
     {
-        if (t == BinaryOperatorAST::Type::Sum)
-        {
-            out << "+";
-        }
-        else if (t == BinaryOperatorAST::Type::Mul)
-        {
-            out << "*";
-        }
-        else if (t == BinaryOperatorAST::Type::Sub)
-        {
-            out << "-";
-        }
-        else if (t == BinaryOperatorAST::Type::Div)
-        {
-            out << "/";
-        }
+        out << BinaryOperatorAST::typeToString(t);
         return out;
     }
 }
