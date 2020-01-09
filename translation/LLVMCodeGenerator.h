@@ -26,6 +26,8 @@ namespace Translation
 
         void visit(const AST::ExpressionPairAST &op) override;
 
+        void visit(const AST::VariableDeclarationAST &op) override;
+
     private:
         std::vector<llvm::Value *> getValues() const;
         llvm::Function * GenerateMainDeclaration();

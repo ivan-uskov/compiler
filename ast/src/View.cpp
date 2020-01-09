@@ -2,6 +2,7 @@
 #include "../BinaryOperatorAST.h"
 #include "../NumberAST.h"
 #include "../ExpressionPairAST.h"
+#include "../VariableDeclarationAST.h"
 
 using namespace AST;
 
@@ -29,4 +30,9 @@ void View::visit(ExpressionPairAST const &op)
     mOut << ";" << std::endl;
     op.acceptRight(*this);
     mOut << ";" << std::endl;
+}
+
+void View::visit(VariableDeclarationAST const &op)
+{
+    mOut << op.getResultType() << " " << op.getId();
 }

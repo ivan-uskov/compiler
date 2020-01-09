@@ -14,6 +14,8 @@ namespace Translation
 
         void visit(const AST::ExpressionPairAST &op) override;
 
+        void visit(const AST::VariableDeclarationAST &op) override;
+
         std::vector<double> getValues() const;
 
     private:

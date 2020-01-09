@@ -15,6 +15,8 @@ namespace AST
 
         void visit(ExpressionPairAST const &op) override;
 
+        void visit(VariableDeclarationAST const &op) override;
+
     private:
         std::ostream & mOut;
     };

@@ -6,7 +6,7 @@
 inline std::vector<std::pair<SLR::Rules::Table, std::deque<Token::Token>>> getCases()
 {
     return {
-            {
+/*            {
                     {
                             {Token::Root, {Token::S}},
                             {Token::S, {Token::A, Token::Else, Token::B, Token::Semicolon}},
@@ -111,7 +111,7 @@ inline std::vector<std::pair<SLR::Rules::Table, std::deque<Token::Token>>> getCa
                             {Token::C, {}}
                     },
                     {{Token::a}, {Token::a}, {Token::c}, {Token::b}, {Token::b}, {Token::End}}
-            }
+            }*/
     };
 }
 

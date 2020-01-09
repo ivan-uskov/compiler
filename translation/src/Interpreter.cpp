@@ -74,3 +74,8 @@ std::vector<double> Interpreter::getValues() const
     std::reverse(res.begin(), res.end());
     return res;
 }
+
+void Interpreter::visit(VariableDeclarationAST const &op)
+{
+    //TODO: add impl
+}

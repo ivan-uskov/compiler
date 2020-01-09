@@ -23,3 +23,8 @@ void ExpressionPairAST::acceptRight(IASTVisitor & v) const
 {
     mRight->accept(v);
 }
+
+ValueType ExpressionPairAST::getResultType() const
+{
+    return Void;
+}

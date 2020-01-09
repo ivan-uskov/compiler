@@ -7,20 +7,20 @@ namespace Lexer
     void TokenPatternProvider::initialize()
     {
         m_patterns = {
-                {Token::String,            "string"},
-                {Token::Return,            "return"},
-                {Token::For,               "for"},
-                {Token::Int,               "int"},
-                {Token::If,                "if"},
+                {Token::String,     "string"},
+                {Token::Return,     "return"},
+                {Token::For,        "for"},
+                {Token::Number,     "number"},
+                {Token::If,         "if"},
 
-                {Token::And,               "&&"},
-                {Token::Or,                "||"},
-                {Token::Equals,            "=="},
+                {Token::And,        "&&"},
+                {Token::Or,         "||"},
+                {Token::Equals,     "=="},
 
-                {Token::Comma,             ","},
-                {Token::Semicolon,         ";"},
-                {Token::Assignment,        "="},
-                {Token::Less,              "<"},
+                {Token::Comma,      ","},
+                {Token::Semicolon,  ";"},
+                {Token::Assignment, "="},
+                {Token::Less,       "<"},
                 {Token::More,              ">"},
                 {Token::OpenBrace,        "{"},
                 {Token::CloseBrace,       "}"},
@@ -37,7 +37,7 @@ namespace Lexer
         m_regexPatterns = {
                 {Token::Id,    regex("^([a-zA-Z]+[a-zA-Z0-9]*)(.*)$")},
                 {Token::StringLiteral, regex("^(\'[^\']*\')(.*)$")},
-                {Token::Number,        regex("^([0-9]+)(.*)$")}
+                {Token::NumberLiteral, regex("^([0-9]+)(.*)$")}
         };
     }
 

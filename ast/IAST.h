@@ -4,6 +4,7 @@
 #include "token/Type.h"
 
 #include "IASTVisitor.h"
+#include "ValueType.h"
 
 namespace AST
 {
@@ -12,5 +13,6 @@ namespace AST
     public:
         virtual ~IAST() = default;
         virtual void accept(IASTVisitor & v) const = 0;
+        virtual ValueType getResultType() const = 0;
     };
 }

@@ -15,21 +15,22 @@ namespace Token
         {
             case Token::Root:             return "Root";
 
-            case Token::Statement:    return "Stmt";
+            case Token::Statement:        return "Stmt";
             case Token::StatementList:    return "StmtList";
             case Token::Expression:       return "Expr";
             case Token::Expression1:      return "Expr1";
             case Token::Expression2:      return "Expr2";
             case Token::Expression3:      return "Expr3";
+            case Token::VariableDeclaration: return "VarDecl";
 
             case Token::Id:               return "id";
             case Token::StringLiteral:    return "stringLiteral";
-            case Token::Number:           return "n";
+            case Token::NumberLiteral:    return "numberLiteral";
 
             case Token::String:           return "string";
             case Token::Return:           return "return";
             case Token::For:              return "for";
-            case Token::Int:              return "int";
+            case Token::Number:           return "number";
             case Token::If:               return "if";
 
             case Token::And:              return "&&";
@@ -51,28 +52,6 @@ namespace Token
             case Token::Mult:             return "*";
             case Token::Div:              return "/";
             case Token::Mod:              return "%";
-
-            // testing
-            case Token::S:                return "S";
-            case Token::A:                return "A";
-            case Token::B:                return "B";
-            case Token::C:                return "C";
-            case Token::E:                return "E";
-            case Token::X:                return "X";
-            case Token::Y:                return "Y";
-
-            case Token::a:                return "a";
-            case Token::b:                return "b";
-            case Token::c:                return "c";
-            case Token::i:                return "i";
-            case Token::Else:             return "else";
-            case Token::e:                return "e";
-            case Token::login:            return "login";
-            case Token::d:                return "d";
-            case Token::s:                return "s";
-            case Token::While:            return "while";
-            case Token::Do:               return "do";
-            // testing end
 
             case Token::End:              return "end";
             default:                            return "Unexpected token type";

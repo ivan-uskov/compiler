@@ -149,3 +149,8 @@ void LLVMCodeGenerator::GenerateMainDefinition(Function &fn, AST::IAST & ast)
         throw logic_error("Function verification failed for main '" + output.str() + "'");
     }
 }
+
+void LLVMCodeGenerator::visit(const AST::VariableDeclarationAST &op)
+{
+    //TODO: add impl
+}

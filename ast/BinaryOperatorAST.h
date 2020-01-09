@@ -20,11 +20,14 @@ namespace AST
         void acceptRight(IASTVisitor & v) const;
         Type getType() const;
 
+        ValueType getResultType() const override;
+
     private:
         std::unique_ptr<IAST> mLeft;
         std::unique_ptr<IAST> mRight;
         Type mType;
+        ValueType mValueType;
     };
-}
 
-std::ostream & operator << (std::ostream & out, AST::BinaryOperatorAST::Type t);
+    std::ostream & operator << (std::ostream & out, AST::BinaryOperatorAST::Type t);
+}

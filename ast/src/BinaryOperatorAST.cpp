@@ -1,4 +1,5 @@
 #include "../BinaryOperatorAST.h"
+#include <stdexcept>
 
 using namespace AST;
 
@@ -7,6 +8,12 @@ BinaryOperatorAST::BinaryOperatorAST(std::unique_ptr<IAST> && left, std::unique_
         , mRight(std::move(right))
         , mType(t)
 {
+    if (mLeft->getResultType() != mRight->getResultType())
+    {
+        throw std::logic_error("Invalid operand types");
+    }
+
+    mValueType = mLeft->getResultType();
 }
 
 void BinaryOperatorAST::accept(IASTVisitor & v) const
@@ -29,23 +36,31 @@ BinaryOperatorAST::Type BinaryOperatorAST::getType() const
     return mType;
 }
 
-std::ostream & operator << (std::ostream & out, BinaryOperatorAST::Type t)
+ValueType BinaryOperatorAST::getResultType() const
 {
-    if (t == BinaryOperatorAST::Type::Sum)
+    return mValueType;
+}
+
+namespace AST
+{
+    std::ostream & operator << (std::ostream & out, BinaryOperatorAST::Type t)
     {
-        out << "+";
+        if (t == BinaryOperatorAST::Type::Sum)
+        {
+            out << "+";
+        }
+        else if (t == BinaryOperatorAST::Type::Mul)
+        {
+            out << "*";
+        }
+        else if (t == BinaryOperatorAST::Type::Sub)
+        {
+            out << "-";
+        }
+        else if (t == BinaryOperatorAST::Type::Div)
+        {
+            out << "/";
+        }
+        return out;
     }
-    else if (t == BinaryOperatorAST::Type::Mul)
-    {
-        out << "*";
-    }
-    else if (t == BinaryOperatorAST::Type::Sub)
-    {
-        out << "-";
-    }
-    else if (t == BinaryOperatorAST::Type::Div)
-    {
-        out << "/";
-    }
-    return out;
 }

@@ -5,7 +5,7 @@ using namespace AST;
 NumberAST::NumberAST(Token::Token const& t)
     : mT(t)
 {
-    if (mT.type != Token::Number)
+    if (mT.type != Token::NumberLiteral)
     {
         throw std::logic_error("invalid type, when creating number ast: " + Token::tokenTypeToString(mT.type));
     }
@@ -19,4 +19,9 @@ double NumberAST::getValue() const
 void NumberAST::accept(IASTVisitor & v) const
 {
     v.visit(*this);
+}
+
+ValueType NumberAST::getResultType() const
+{
+    return Number;
 }

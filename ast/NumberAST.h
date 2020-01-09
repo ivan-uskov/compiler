@@ -14,6 +14,9 @@ namespace AST
         void accept(IASTVisitor & v) const override;
 
         double getValue() const;
+
+        ValueType getResultType() const override;
+
     private:
         Token::Token mT;
     };

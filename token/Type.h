@@ -16,37 +16,16 @@ namespace Token
     static const Type Expression1 = NonTerminal | 0x031;
     static const Type Expression2 = NonTerminal | 0x032;
     static const Type Expression3 = NonTerminal | 0x033;
-
-    // testing
-    static const Type S = NonTerminal | 0x04u;
-    static const Type A = NonTerminal | 0x05u;
-    static const Type B = NonTerminal | 0x06u;
-    static const Type C = NonTerminal | 0x07u;
-    static const Type E = NonTerminal | 0x08u;
-    static const Type X = NonTerminal | 0x09u;
-    static const Type Y = NonTerminal | 0x0Au;
-
-    static const Type a = Terminal | 0x1Du;
-    static const Type b = Terminal | 0x1Eu;
-    static const Type c = Terminal | 0x1Fu;
-    static const Type i = Terminal | 0x20u;
-    static const Type Else = Terminal | 0x21u;
-    static const Type e = Terminal | 0x22u;
-    static const Type login = Terminal | 0x23u;
-    static const Type d = Terminal | 0x24u;
-    static const Type s = Terminal | 0x25u;
-    static const Type While = Terminal | 0x26u;
-    static const Type Do = Terminal | 0x27u;
-    // testing end
+    static const Type VariableDeclaration = NonTerminal | 0x04u;
 
     static const Type Id = Terminal | 0x01u;                         // ([a-z]+[a-z0-9]*)
     static const Type StringLiteral = Terminal | 0x02u;              // (\'[^\']*\')
-    static const Type Number = Terminal | 0x03u;                     // ([0-9]+)
+    static const Type NumberLiteral = Terminal | 0x03u;                     // ([0-9]+)
 
     static const Type String = Terminal | 0x04u;                     // string
     static const Type Return = Terminal | 0x05u;                     // return
     static const Type For = Terminal | 0x06u;                        // for
-    static const Type Int = Terminal | 0x07u;                        // int
+    static const Type Number = Terminal | 0x07u;                     // number
     static const Type If = Terminal | 0x08u;                         // if
 
     static const Type And = Terminal | 0x09u;                        // &&

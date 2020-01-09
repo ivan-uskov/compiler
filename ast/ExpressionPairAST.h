@@ -12,6 +12,8 @@ namespace AST
         void acceptLeft(IASTVisitor & v) const;
         void acceptRight(IASTVisitor & v) const;
 
+        ValueType getResultType() const override;
+
     private:
         std::unique_ptr<IAST> mLeft;
         std::unique_ptr<IAST> mRight;
