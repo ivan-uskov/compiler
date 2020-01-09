@@ -2,6 +2,10 @@
 #include "ast/NumberAST.h"
 #include "ast/BinaryOperatorAST.h"
 #include "ast/ExpressionPairAST.h"
+#include "ast/VariableDeclarationAST.h"
+#include "ast/VariableAccessAST.h"
+#include "ast/FunctionCallAST.h"
+#include "ast/AssignmentAST.h"
 
 #include <stdexcept>
 
@@ -10,7 +14,7 @@ using namespace AST;
 
 namespace
 {
-    float calc(double left, double right, BinaryOperatorAST::Type t)
+    double calc(double left, double right, BinaryOperatorAST::Type t)
     {
         if (t == BinaryOperatorAST::Type::Sum)
         {
@@ -61,36 +65,47 @@ void Interpreter::visit(ExpressionPairAST const &op)
     op.acceptRight(*this);
 }
 
-std::vector<double> Interpreter::getValues() const
-{
-    auto stack = mStack;
-    std::vector<double> res;
-    res.reserve(stack.size());
-    while (!stack.empty())
-    {
-        res.push_back(stack.top());
-        stack.pop();
-    }
-    std::reverse(res.begin(), res.end());
-    return res;
-}
-
 void Interpreter::visit(VariableDeclarationAST const &op)
 {
-    //TODO: add impl
+    mScope[op.getId()] = Var{op.getResultType()};
 }
 
 void Interpreter::visit(AssignmentAST const &op)
 {
-    //TODO: add impl
+    op.acceptValue(*this);
+
+    if (mStack.empty())
+    {
+        throw std::logic_error("invalid stack size for evaluating assignment");
+    }
+
+    auto value = mStack.top();
+    mStack.pop();
+
+    mScope[op.getId()].numVal = value; //TODO: add string support
 }
 
 void Interpreter::visit(VariableAccessAST const &op)
 {
-    //TODO: add impl
+    mStack.push(mScope[op.getId()].numVal); //TODO: add string support
 }
 
 void Interpreter::visit(FunctionCallAST const &op)
 {
-    //TODO: add impl
+    op.acceptArgument(*this);
+
+    if (mStack.empty())
+    {
+        throw std::logic_error("invalid stack size for evaluating assignment");
+    }
+
+    auto arg = mStack.top();
+    mStack.pop();
+
+    mOut << arg;
+}
+
+Interpreter::Interpreter(std::ostream &out)
+    : mOut(out)
+{
 }

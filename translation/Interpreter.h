@@ -3,12 +3,17 @@
 #include <stack>
 #include <vector>
 #include "ast/IASTVisitor.h"
+#include "ast/ValueType.h"
+
+#include <map>
 
 namespace Translation
 {
     class Interpreter : public AST::IASTVisitor
     {
     public:
+        explicit Interpreter(std::ostream & out);
+
         void visit(AST::BinaryOperatorAST const& op) override;
         void visit(AST::NumberAST const& op) override;
         void visit(const AST::ExpressionPairAST &op) override;
@@ -17,9 +22,17 @@ namespace Translation
         void visit(const AST::VariableAccessAST &op) override;
         void visit(const AST::FunctionCallAST &op) override;
 
-        std::vector<double> getValues() const;
-
     private:
+        struct Var
+        {
+            AST::ValueType type;
+            std::string strVal;
+            double numVal = 0;
+        };
+
         std::stack<double> mStack;
+        std::map<std::string, Var> mScope;
+
+        std::ostream & mOut;
     };
 }

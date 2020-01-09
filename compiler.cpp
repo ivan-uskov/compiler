@@ -31,12 +31,9 @@ void run(istream & in, ostream & out)
             ast->accept(av);
             out << endl;
 
-            Translation::Interpreter interpreter;
+            Translation::Interpreter interpreter(cout);
             ast->accept(interpreter);
-            for (auto v : interpreter.getValues())
-            {
-                out << v << ";" << endl;
-            }
+            out << endl;
 
             Translation::LLVMCodeGenerator codeGen;
             out << codeGen.generate(*ast) << endl;
