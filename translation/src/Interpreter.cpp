@@ -79,3 +79,18 @@ void Interpreter::visit(VariableDeclarationAST const &op)
 {
     //TODO: add impl
 }
+
+void Interpreter::visit(AssignmentAST const &op)
+{
+    //TODO: add impl
+}
+
+void Interpreter::visit(VariableAccessAST const &op)
+{
+    //TODO: add impl
+}
+
+void Interpreter::visit(FunctionCallAST const &op)
+{
+    //TODO: add impl
+}

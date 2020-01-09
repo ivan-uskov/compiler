@@ -154,3 +154,18 @@ void LLVMCodeGenerator::visit(const AST::VariableDeclarationAST &op)
 {
     //TODO: add impl
 }
+
+void LLVMCodeGenerator::visit(const AST::AssignmentAST &op)
+{
+    //TODO: add impl
+}
+
+void LLVMCodeGenerator::visit(const AST::VariableAccessAST &op)
+{
+    //TODO: add impl
+}
+
+void LLVMCodeGenerator::visit(const AST::FunctionCallAST &op)
+{
+    //TODO: add impl
+}

@@ -6,6 +6,9 @@ namespace AST
     class NumberAST;
     class ExpressionPairAST;
     class VariableDeclarationAST;
+    class AssignmentAST;
+    class VariableAccessAST;
+    class FunctionCallAST;
 
     class IASTVisitor
     {
@@ -15,5 +18,8 @@ namespace AST
         virtual void visit(NumberAST const& op) = 0;
         virtual void visit(ExpressionPairAST const& op) = 0;
         virtual void visit(VariableDeclarationAST const& op) = 0;
+        virtual void visit(AssignmentAST const& op) = 0;
+        virtual void visit(VariableAccessAST const& op) = 0;
+        virtual void visit(FunctionCallAST const& op) = 0;
     };
 }

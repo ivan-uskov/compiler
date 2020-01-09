@@ -3,6 +3,9 @@
 #include "../NumberAST.h"
 #include "../ExpressionPairAST.h"
 #include "../VariableDeclarationAST.h"
+#include "../AssignmentAST.h"
+#include "../VariableAccessAST.h"
+#include "../FunctionCallAST.h"
 
 using namespace AST;
 
@@ -29,10 +32,27 @@ void View::visit(ExpressionPairAST const &op)
     op.acceptLeft(*this);
     mOut << ";" << std::endl;
     op.acceptRight(*this);
-    mOut << ";" << std::endl;
 }
 
 void View::visit(VariableDeclarationAST const &op)
 {
     mOut << op.getResultType() << " " << op.getId();
+}
+
+void View::visit(AssignmentAST const &op)
+{
+    mOut << op.getId() << " = ";
+    op.acceptValue(*this);
+}
+
+void View::visit(VariableAccessAST const &op)
+{
+    mOut << op.getId();
+}
+
+void View::visit(FunctionCallAST const &op)
+{
+    mOut << "print(";
+    op.acceptArgument(*this);
+    mOut << ")";
 }

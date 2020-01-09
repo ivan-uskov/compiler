@@ -23,10 +23,11 @@ namespace Translation
 
         void visit(AST::BinaryOperatorAST const& op) override;
         void visit(AST::NumberAST const& op) override;
-
         void visit(const AST::ExpressionPairAST &op) override;
-
         void visit(const AST::VariableDeclarationAST &op) override;
+        void visit(const AST::AssignmentAST &op) override;
+        void visit(const AST::VariableAccessAST &op) override;
+        void visit(const AST::FunctionCallAST &op) override;
 
     private:
         std::vector<llvm::Value *> getValues() const;

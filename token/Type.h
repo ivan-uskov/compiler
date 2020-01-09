@@ -30,11 +30,11 @@ namespace Token
 
     static const Type And = Terminal | 0x09u;                        // &&
     static const Type Or = Terminal | 0x0Au;                         // ||
-    static const Type Equals = Terminal | 0x0Bu;                     // ==
+    static const Type DoubleEquals = Terminal | 0x0Bu;               // ==
 
     static const Type Comma = Terminal | 0x0Cu;                      // ,
     static const Type Semicolon = Terminal | 0x0Du;                  // ;
-    static const Type Assignment = Terminal | 0x0Eu;                 // =
+    static const Type Equals = Terminal | 0x0Eu;                     // =
     static const Type Less = Terminal | 0x0Fu;                       // <
     static const Type More = Terminal | 0x10u;                       // >
     static const Type OpenBrace = Terminal | 0x11u;                 // {

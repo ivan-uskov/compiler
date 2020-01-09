@@ -35,11 +35,11 @@ namespace Token
 
             case Token::And:              return "&&";
             case Token::Or:               return "||";
-            case Token::Equals:           return "==";
+            case Token::DoubleEquals:           return "==";
 
             case Token::Comma:            return ",";
             case Token::Semicolon:        return ";";
-            case Token::Assignment:       return "=";
+            case Token::Equals:       return "=";
             case Token::Less:             return "<";
             case Token::More:             return ">";
             case Token::OpenBrace:        return "{";

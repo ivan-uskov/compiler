@@ -62,9 +62,9 @@ inline std::vector<std::pair<SLR::Rules::Table, std::deque<Token::Token>>> getCa
                             {Token::E, {Token::E, Token::Plus, Token::E}},
                             {Token::E, {Token::Id}},
                             {Token::A, {}},
-                            {Token::A, {Token::Id, Token::Assignment, Token::E}}
+                            {Token::A, {Token::Id, Token::Equals, Token::E}}
                     },
-                    {{Token::While}, {Token::Id}, {Token::Plus}, {Token::Id}, {Token::Do}, {Token::Id}, {Token::Assignment}, {Token::Id}, {Token::End}}
+                    {{Token::While}, {Token::Id}, {Token::Plus}, {Token::Id}, {Token::Do}, {Token::Id}, {Token::Equals}, {Token::Id}, {Token::End}}
             },
             {
                     {

@@ -3,6 +3,9 @@
 #include "ast/BinaryOperatorAST.h"
 #include "ast/ExpressionPairAST.h"
 #include "ast/VariableDeclarationAST.h"
+#include "ast/AssignmentAST.h"
+#include "ast/VariableAccessAST.h"
+#include "ast/FunctionCallAST.h"
 #include "ast_builder/ASTBuilder.h"
 #include "slr_parser/Parser.h"
 
@@ -33,7 +36,7 @@ namespace
     Rules::Action getUnaryMinusASTReducer(T & stack)
     {
         return [&stack](auto const& tokens) {
-            if (stack.size() < 1)
+            if (stack.empty())
             {
                 throw std::logic_error("too small stack for unary minus");
             }
@@ -98,7 +101,53 @@ namespace
                 throw std::logic_error("invalid tokens for reduce vardecl");
             }
 
-            stack.emplace(new VariableDeclarationAST(v, tokens[0])); //TODO: check right value
+            stack.emplace(new VariableDeclarationAST(v, tokens[0]));
+        };
+    }
+
+    template<typename T>
+    Rules::Action getAssignmentASTReducer(T & stack)
+    {
+        return [&stack](auto const& tokens) {
+            if (tokens.size() != 3 || stack.empty())
+            {
+                throw std::logic_error("invalid state for reduce assignment");
+            }
+
+            auto value = std::move(stack.top());
+            stack.pop();
+
+            stack.emplace(new AssignmentAST(tokens[2], std::move(value)));
+        };
+    }
+
+    template<typename T>
+    Rules::Action getVariableAccessASTReducer(T & stack)
+    {
+        return [&stack](auto const& tokens) {
+            if (tokens.size() != 1)
+            {
+                throw std::logic_error("invalid tokens for reduce variable access");
+            }
+
+            stack.emplace(new VariableAccessAST(tokens[0], ValueType::Number)); //TODO: add type inference and var exist check
+        };
+    }
+
+    template<typename T>
+    Rules::Action getFunctionCallASTReducer(T & stack)
+    {
+        // only print function supported with 1 argument
+        return [&stack](auto const& tokens) {
+            if (tokens.size() != 4 || stack.empty() || tokens[3].value != "print")
+            {
+                throw std::logic_error("invalid state for reduce function call");
+            }
+
+            auto arg = std::move(stack.top());
+            stack.pop();
+
+            stack.emplace(new FunctionCallAST(std::move(arg)));
         };
     }
 }
@@ -107,20 +156,26 @@ Rules::Table ASTBuilder::getRules()
 {
     return  {
             {Token::Root,          {Token::StatementList}, getRootReducer(mStack)},
-            {Token::StatementList, {Token::Statement, Token::Semicolon,  Token::StatementList}, getExpressionListReducer(mStack)},
+
+            {Token::StatementList, {Token::Statement, Token::Semicolon, Token::StatementList}, getExpressionListReducer(mStack)},
             {Token::StatementList, {Token::Statement}},
+
             {Token::Statement,     {Token::Number, Token::Id}, getVariableDeclarationASTReducer(mStack, AST::ValueType::Number)},
             {Token::Statement,     {Token::String, Token::Id}, getVariableDeclarationASTReducer(mStack, AST::ValueType::String)},
-            {Token::Statement,     {Token::Expression}},
-            {Token::Expression,    {Token::Expression, Token::Plus, Token::Expression1}, getBinaryOperatorASTReducer(mStack, BinaryOperatorAST::Type::Sum)},
-            {Token::Expression,    {Token::Expression, Token::Minus, Token::Expression1}, getBinaryOperatorASTReducer(mStack, BinaryOperatorAST::Type::Sub)},
+            {Token::Statement,     {Token::Id, Token::Equals,           Token::Expression}, getAssignmentASTReducer(mStack)},
+            {Token::Statement,     {Token::Id, Token::OpenParenthesis, Token::Expression, Token::CloseParenthesis}, getFunctionCallASTReducer(mStack)},
+
+            {Token::Expression,    {Token::Expression, Token::Plus,     Token::Expression1}, getBinaryOperatorASTReducer(mStack, BinaryOperatorAST::Type::Sum)},
+            {Token::Expression,    {Token::Expression, Token::Minus,    Token::Expression1}, getBinaryOperatorASTReducer(mStack, BinaryOperatorAST::Type::Sub)},
             {Token::Expression,    {Token::Expression1}},
-            {Token::Expression1,   {Token::Expression1, Token::Mult, Token::Expression2}, getBinaryOperatorASTReducer(mStack, BinaryOperatorAST::Type::Mul)},
+            {Token::Expression1,   {Token::Expression1, Token::Mult,    Token::Expression2}, getBinaryOperatorASTReducer(mStack, BinaryOperatorAST::Type::Mul)},
             {Token::Expression1,   {Token::Expression1, Token::Div, Token::Expression2}, getBinaryOperatorASTReducer(mStack, BinaryOperatorAST::Type::Div)},
             {Token::Expression1,   {Token::Expression2}},
+
             {Token::Expression2,   {Token::OpenParenthesis, Token::Expression, Token::CloseParenthesis}},
             {Token::Expression2,   {Token::Minus, Token::Expression2}, getUnaryMinusASTReducer(mStack)},
-            {Token::Expression2,   {Token::NumberLiteral}, getNumberASTReducer(mStack)}
+            {Token::Expression2,   {Token::NumberLiteral}, getNumberASTReducer(mStack)},
+            {Token::Expression2,   {Token::Id}, getVariableAccessASTReducer(mStack)}
     };
 }
 
