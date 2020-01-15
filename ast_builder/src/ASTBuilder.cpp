@@ -220,18 +220,18 @@ namespace
 Rules::Table ASTBuilder::getRules()
 {
     return  {
-            {Token::Root,           {Token::StatementList2}, getRootReducer(mStack)},
+            {Token::Root,           {Token::StatementList}, getRootReducer(mStack)},
 
-            {Token::StatementList,  {Token::StatementList2}},
-            {Token::StatementList2, {Token::StatementList2, Token::Semicolon, Token::Statement}, getExpressionListReducer(mStack)},
-            {Token::StatementList2, {Token::Statement}},
+            {Token::StatementList2,  {Token::StatementList}},
+            {Token::StatementList, {Token::StatementList, Token::Semicolon, Token::Statement}, getExpressionListReducer(mStack)},
+            {Token::StatementList, {Token::Statement}},
 
             {Token::Statement,      {Token::Number,      Token::Id}, getVariableDeclarationASTReducer(mStack, mVariables.top(), AST::ValueType::Number)},
             {Token::Statement,      {Token::String,      Token::Id}, getVariableDeclarationASTReducer(mStack, mVariables.top(), AST::ValueType::String)},
             {Token::Statement,      {Token::Id,          Token::Equals,          Token::Expression}, getAssignmentASTReducer(mStack, mVariables.top())},
             {Token::Statement,      {Token::Id,          Token::OpenParenthesis, Token::Expression, Token::CloseParenthesis}, getFunctionCallASTReducer(mStack)},
             {Token::Statement,      {Token::If,          Token::OpenParenthesis, Token::BoolExpression, Token::CloseParenthesis,
-                                     Token::OpenBrace,   Token::StatementList,   Token::CloseBrace}, getIfASTReducer(mStack)},
+                                     Token::OpenBrace,   Token::StatementList2,   Token::CloseBrace}, getIfASTReducer(mStack)},
 
             {Token::BoolExpression, {Token::Expression,  Token::Less,            Token::Expression}, getBoolBinaryOperatorASTReducer(mStack, BoolBinaryOperatorAST::Type::Less)},
             {Token::BoolExpression, {Token::Expression,  Token::More,            Token::Expression}, getBoolBinaryOperatorASTReducer(mStack, BoolBinaryOperatorAST::Type::More)},
