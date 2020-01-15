@@ -8,6 +8,7 @@
 #include "../FunctionCallAST.h"
 #include "../BoolBinaryOperatorAST.h"
 #include "../IfAST.h"
+#include "../WhileAST.h"
 
 using namespace AST;
 
@@ -75,5 +76,15 @@ void View::visit(IfAST const &op)
     mOut << ")" << std::endl;
     mOut << "{" << std::endl << "    ";
     op.acceptStmt(*this);
-    mOut << std::endl << "}" << std::endl;
+    mOut << std::endl << "}" << std::endl; //TODO: add spaces
+}
+
+void View::visit(WhileAST const &op)
+{
+    mOut << "while (";
+    op.acceptCond(*this);
+    mOut << ")" << std::endl;
+    mOut << "{" << std::endl << "    ";
+    op.acceptStmt(*this);
+    mOut << std::endl << "}" << std::endl; //TODO: add spaces
 }

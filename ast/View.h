@@ -19,6 +19,7 @@ namespace AST
         void visit(FunctionCallAST const &op) override;
         void visit(BoolBinaryOperatorAST const &op) override;
         void visit(IfAST const &op) override;
+        void visit(WhileAST const &op) override;
 
     private:
         std::ostream & mOut;

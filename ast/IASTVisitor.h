@@ -11,6 +11,7 @@ namespace AST
     class FunctionCallAST;
     class BoolBinaryOperatorAST;
     class IfAST;
+    class WhileAST;
 
     class IASTVisitor
     {
@@ -25,5 +26,6 @@ namespace AST
         virtual void visit(FunctionCallAST const& op) = 0;
         virtual void visit(BoolBinaryOperatorAST const& op) = 0;
         virtual void visit(IfAST const& op) = 0;
+        virtual void visit(WhileAST const& op) = 0;
     };
 }

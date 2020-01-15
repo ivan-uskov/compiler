@@ -12,11 +12,14 @@ namespace Token
 
     static const Type Statement = NonTerminal | 0x100u;
     static const Type StatementList = NonTerminal | 0x101u;
-    static const Type StatementList2 = NonTerminal | 0x102u;
+    static const Type StatementListIf = NonTerminal | 0x102u;
+    static const Type StatementListWhile = NonTerminal | 0x103u;
     static const Type Expression = NonTerminal | 0x200u;
     static const Type Expression1 = NonTerminal | 0x201u;
     static const Type Expression2 = NonTerminal | 0x202u;
     static const Type BoolExpression = NonTerminal | 0x203u;
+    static const Type BoolExpressionIf = NonTerminal | 0x204u;
+    static const Type BoolExpressionWhile = NonTerminal | 0x205u;
     static const Type VariableDeclaration = NonTerminal | 0x300u;
 
     static const Type Id = Terminal | 0x100u;                         // ([a-z]+[a-z0-9]*)
@@ -26,7 +29,7 @@ namespace Token
 
     static const Type String = Terminal | 0x301u;                     // string
     static const Type Return = Terminal | 0x302u;                     // return
-    static const Type For = Terminal | 0x303u;                        // for
+    static const Type While = Terminal | 0x303u;                        // for
     static const Type Number = Terminal | 0x304u;                     // number
     static const Type If = Terminal | 0x305u;                         // if
 

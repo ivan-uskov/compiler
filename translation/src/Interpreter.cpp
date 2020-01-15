@@ -119,3 +119,8 @@ void Interpreter::visit(IfAST const &op)
 {
     //TODO: implement
 }
+
+void Interpreter::visit(WhileAST const &op)
+{
+    //TODO: impl
+}

@@ -7,19 +7,19 @@ namespace Lexer
     void TokenPatternProvider::initialize()
     {
         m_patterns = {
-                {Token::String,           "string"},
-                {Token::Return,           "return"},
-                {Token::For,              "for"},
-                {Token::Number,           "number"},
-                {Token::If,               "if"},
+                {Token::String,       "string"},
+                {Token::Return,       "return"},
+                {Token::While,        "While"},
+                {Token::Number,       "number"},
+                {Token::If,           "if"},
 
-                {Token::And,              "&&"},
-                {Token::Or,               "||"},
-                {Token::DoubleEquals,     "=="},
+                {Token::And,          "&&"},
+                {Token::Or,           "||"},
+                {Token::DoubleEquals, "=="},
 
-                {Token::Comma,            ","},
-                {Token::Semicolon,        ";"},
-                {Token::Equals,           "="},
+                {Token::Comma,        ","},
+                {Token::Semicolon,    ";"},
+                {Token::Equals,       "="},
                 {Token::Less,             "<"},
                 {Token::More,             ">"},
                 {Token::OpenBrace,        "{"},

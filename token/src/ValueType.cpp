@@ -17,11 +17,14 @@ namespace Token
 
             case Token::Statement:        return "Stmt";
             case Token::StatementList:    return "StmtList";
-            case Token::StatementList2:    return "StmtList2";
+            case Token::StatementListIf:  return "StmtListIf";
+            case Token::StatementListWhile: return "StmtListWhile";
             case Token::Expression:       return "Expr";
             case Token::Expression1:      return "Expr1";
             case Token::Expression2:      return "Expr2";
             case Token::BoolExpression:   return "BoolExpr";
+            case Token::BoolExpressionIf: return "BoolExprIf";
+            case Token::BoolExpressionWhile: return "BoolExprWhile";
             case Token::VariableDeclaration: return "VarDecl";
 
             case Token::Id:               return "id";
@@ -30,7 +33,7 @@ namespace Token
 
             case Token::String:           return "string";
             case Token::Return:           return "return";
-            case Token::For:              return "for";
+            case Token::While:              return "While";
             case Token::Number:           return "number";
             case Token::If:               return "if";
 
