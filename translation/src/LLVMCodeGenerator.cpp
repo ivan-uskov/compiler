@@ -169,3 +169,13 @@ void LLVMCodeGenerator::visit(const AST::FunctionCallAST &op)
 {
     //TODO: add impl
 }
+
+void LLVMCodeGenerator::visit(const AST::BoolBinaryOperatorAST &op)
+{
+    //TODO: add impl
+}
+
+void LLVMCodeGenerator::visit(const AST::IfAST &op)
+{
+    //TODO: impl
+}

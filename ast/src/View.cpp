@@ -6,6 +6,8 @@
 #include "../AssignmentAST.h"
 #include "../VariableAccessAST.h"
 #include "../FunctionCallAST.h"
+#include "../BoolBinaryOperatorAST.h"
+#include "../IfAST.h"
 
 using namespace AST;
 
@@ -55,4 +57,23 @@ void View::visit(FunctionCallAST const &op)
     mOut << "print(";
     op.acceptArgument(*this);
     mOut << ")";
+}
+
+void View::visit(BoolBinaryOperatorAST const &op)
+{
+    mOut << "(";
+    op.acceptLeft(*this);
+    mOut << op.getType();
+    op.acceptRight(*this);
+    mOut << ")";
+}
+
+void View::visit(IfAST const &op)
+{
+    mOut << "if (";
+    op.acceptCond(*this);
+    mOut << ")" << std::endl;
+    mOut << "{" << std::endl << "    ";
+    op.acceptStmt(*this);
+    mOut << std::endl << "}" << std::endl;
 }

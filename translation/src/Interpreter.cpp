@@ -109,3 +109,13 @@ Interpreter::Interpreter(std::ostream &out)
     : mOut(out)
 {
 }
+
+void Interpreter::visit(BoolBinaryOperatorAST const &op)
+{
+    //TODO: add bool values to stack
+}
+
+void Interpreter::visit(IfAST const &op)
+{
+    //TODO: implement
+}

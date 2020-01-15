@@ -9,7 +9,8 @@ namespace AST
         Error = 0,
         Void = 1,
         Number = 2,
-        String = 3
+        String = 3,
+        Bool = 4
     };
 
     std::ostream & operator << (std::ostream & out, ValueType const& t);

@@ -21,6 +21,8 @@ namespace AST
                 return "number";
             case ValueType::String:
                 return "string";
+            case ValueType::Bool:
+                return "bool";
             default:
                 return "";
         }

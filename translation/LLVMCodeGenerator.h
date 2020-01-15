@@ -28,6 +28,8 @@ namespace Translation
         void visit(const AST::AssignmentAST &op) override;
         void visit(const AST::VariableAccessAST &op) override;
         void visit(const AST::FunctionCallAST &op) override;
+        void visit(const AST::BoolBinaryOperatorAST &op) override;
+        void visit(const AST::IfAST &op) override;
 
     private:
         std::vector<llvm::Value *> getValues() const;

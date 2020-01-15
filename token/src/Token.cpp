@@ -14,7 +14,7 @@ namespace Token
     std::string tokenDescription(Token const& token)
     {
         ostringstream ostr;
-        ostr << tokenTypeToString(token.type) << "\t\t[" << token.value << "]\t\tat\t" << token.line << ":" << token.column;
+        ostr << tokenTypeToString(token.type) << " [" << token.value << "] at " << token.line << ":" << token.column;
         return ostr.str();
     }
 }

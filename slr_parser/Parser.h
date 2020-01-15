@@ -51,7 +51,7 @@ namespace SLR
         std::string getNoneErrorMessage(Token::Type next) const
         {
             std::ostringstream out;
-            out << "after " << (tokens.empty() ? "--" : Token::tokenTypeToString(tokens.top().type)) << " expected ";
+            out << "after " << (tokens.empty() ? "--" : Token::tokenDescription(tokens.top())) << " expected ";
 
             for (auto & i : parseTable[states.top()])
             {

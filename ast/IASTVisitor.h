@@ -9,6 +9,8 @@ namespace AST
     class AssignmentAST;
     class VariableAccessAST;
     class FunctionCallAST;
+    class BoolBinaryOperatorAST;
+    class IfAST;
 
     class IASTVisitor
     {
@@ -21,5 +23,7 @@ namespace AST
         virtual void visit(AssignmentAST const& op) = 0;
         virtual void visit(VariableAccessAST const& op) = 0;
         virtual void visit(FunctionCallAST const& op) = 0;
+        virtual void visit(BoolBinaryOperatorAST const& op) = 0;
+        virtual void visit(IfAST const& op) = 0;
     };
 }
