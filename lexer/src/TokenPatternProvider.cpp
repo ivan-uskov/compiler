@@ -9,7 +9,7 @@ namespace Lexer
         m_patterns = {
                 {Token::String,       "string"},
                 {Token::Return,       "return"},
-                {Token::While,        "While"},
+                {Token::While,        "while"},
                 {Token::Number,       "number"},
                 {Token::If,           "if"},
 

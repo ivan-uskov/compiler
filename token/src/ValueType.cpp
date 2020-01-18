@@ -23,8 +23,6 @@ namespace Token
             case Token::Expression1:      return "Expr1";
             case Token::Expression2:      return "Expr2";
             case Token::BoolExpression:   return "BoolExpr";
-            case Token::BoolExpressionIf: return "BoolExprIf";
-            case Token::BoolExpressionWhile: return "BoolExprWhile";
             case Token::VariableDeclaration: return "VarDecl";
 
             case Token::Id:               return "id";
@@ -33,7 +31,7 @@ namespace Token
 
             case Token::String:           return "string";
             case Token::Return:           return "return";
-            case Token::While:              return "While";
+            case Token::While:            return "while";
             case Token::Number:           return "number";
             case Token::If:               return "if";
 

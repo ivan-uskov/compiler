@@ -18,8 +18,6 @@ namespace Token
     static const Type Expression1 = NonTerminal | 0x201u;
     static const Type Expression2 = NonTerminal | 0x202u;
     static const Type BoolExpression = NonTerminal | 0x203u;
-    static const Type BoolExpressionIf = NonTerminal | 0x204u;
-    static const Type BoolExpressionWhile = NonTerminal | 0x205u;
     static const Type VariableDeclaration = NonTerminal | 0x300u;
 
     static const Type Id = Terminal | 0x100u;                         // ([a-z]+[a-z0-9]*)

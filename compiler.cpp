@@ -6,39 +6,29 @@
 #include "ast/View.h"
 #include "translation/Interpreter.h"
 #include "translation/LLVMCodeGenerator.h"
-#include "parser_tests.h"
 
 using namespace std;
 using namespace Lexer;
 
 void run(istream & in, ostream & out)
 {
-    while (!in.eof())
-    {
-        string line;
-        getline(in, line);
-        if (!line.empty())
-        {
-            istringstream lineStrm(line);
-            Tokenizer tokenizer(lineStrm, out);
-            auto tokens = tokenizer.getTokens();
+    Tokenizer tokenizer(in, out);
+    auto tokens = tokenizer.getTokens();
 
-            ostringstream fakeOut;
-            ASTBuilder astBuilder(fakeOut);
-            auto ast = astBuilder.build(tokens);
+    ostringstream fakeOut;
+    ASTBuilder astBuilder(fakeOut);
+    auto ast = astBuilder.build(tokens);
 
-            AST::View av(out);
-            ast->accept(av);
-            out << endl;
+    AST::View av(out);
+    ast->accept(av);
+    out << endl;
 
-            Translation::Interpreter interpreter(cout);
-            ast->accept(interpreter);
-            out << endl;
+    Translation::Interpreter interpreter(cout);
+    ast->accept(interpreter);
+    out << endl;
 
-            Translation::LLVMCodeGenerator codeGen;
-            out << codeGen.generate(*ast) << endl;
-        }
-    }
+    Translation::LLVMCodeGenerator codeGen;
+    out << codeGen.generate(*ast) << endl;
 }
 
 int main()
