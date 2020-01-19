@@ -10,8 +10,8 @@ namespace AST
     public:
         explicit View(std::ostream & out);
 
-        void visit(BinaryOperatorAST const& op) override;
-        void visit(NumberAST const& op) override;
+        void visit(NumberBinaryOperatorAST const& op) override;
+        void visit(IntAST const& op) override;
         void visit(ExpressionPairAST const &op) override;
         void visit(VariableDeclarationAST const &op) override;
         void visit(AssignmentAST const &op) override;
@@ -20,6 +20,7 @@ namespace AST
         void visit(CompareBinaryOperatorAST const &op) override;
         void visit(IfAST const &op) override;
         void visit(WhileAST const &op) override;
+        void visit(StringAST const &op) override;
 
     private:
         std::ostream & mOut;

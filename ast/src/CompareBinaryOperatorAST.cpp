@@ -9,12 +9,12 @@ CompareBinaryOperatorAST::CompareBinaryOperatorAST(std::unique_ptr<IAST> && left
         , mRight(std::move(right))
         , mType(t)
 {
-    if (mLeft->getResultType() != ValueType::Number)
+    if (mLeft->getResultType() != ValueType::Int)
     {
         throw std::logic_error("For operation " + typeToString(t) + " invalid left type" + valueTypeToString(mLeft->getResultType()));
     }
 
-    if (mRight->getResultType() != ValueType::Number)
+    if (mRight->getResultType() != ValueType::Int)
     {
         throw std::logic_error("For operation " + typeToString(t) + " invalid right type" + valueTypeToString(mRight->getResultType()));
     }

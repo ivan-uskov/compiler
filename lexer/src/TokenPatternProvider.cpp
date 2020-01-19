@@ -10,8 +10,9 @@ namespace Lexer
                 {Token::String,       "string"},
                 {Token::Return,       "return"},
                 {Token::While,        "while"},
-                {Token::Number,       "number"},
+                {Token::Int,          "int"},
                 {Token::If,           "if"},
+                {Token::Bool,         "bool"},
 
                 {Token::And,          "&&"},
                 {Token::Or,           "||"},
@@ -37,7 +38,7 @@ namespace Lexer
         m_regexPatterns = {
                 {Token::Id,    regex("^([a-zA-Z]+[a-zA-Z0-9]*)(.*)$")},
                 {Token::StringLiteral, regex("^(\'[^\']*\')(.*)$")},
-                {Token::NumberLiteral, regex("^([0-9]+)(.*)$")}
+                {Token::IntLiteral, regex("^([0-9]+)(.*)$")}
         };
     }
 

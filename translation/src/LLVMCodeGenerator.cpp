@@ -11,8 +11,8 @@
 #include <llvm/Support/raw_os_ostream.h>
 #include "../end_llvm.h"
 
-#include "ast/BinaryOperatorAST.h"
-#include "ast/NumberAST.h"
+#include "ast/NumberBinaryOperatorAST.h"
+#include "ast/IntAST.h"
 #include "ast/ExpressionPairAST.h"
 
 using namespace std;
@@ -48,17 +48,17 @@ std::vector<llvm::Value *> LLVMCodeGenerator::getValues() const
 
 namespace
 {
-    Value *GenerateBinaryExpr(IRBuilder<> & builder, LLVMContext &context, Value *a, AST::BinaryOperatorAST::Type t, Value *b)
+    Value *GenerateBinaryExpr(IRBuilder<> & builder, LLVMContext &context, Value *a, AST::NumberBinaryOperatorAST::Type t, Value *b)
     {
         switch (t)
         {
-            case AST::BinaryOperatorAST::Type::Sum:
+            case AST::NumberBinaryOperatorAST::Type::Sum:
                 return builder.CreateFAdd(a, b, "addtmp");
-            case AST::BinaryOperatorAST::Type::Sub:
+            case AST::NumberBinaryOperatorAST::Type::Sub:
                 return builder.CreateFSub(a, b, "subtmp");
-            case AST::BinaryOperatorAST::Type::Mul:
+            case AST::NumberBinaryOperatorAST::Type::Mul:
                 return builder.CreateFMul(a, b, "multmp");
-            case AST::BinaryOperatorAST::Type::Div:
+            case AST::NumberBinaryOperatorAST::Type::Div:
                 return builder.CreateFDiv(a, b, "divtmp");
         }
     }
@@ -82,7 +82,7 @@ void LLVMCodeGenerator::visit(const AST::ExpressionPairAST &op)
     op.acceptRight(*this);
 }
 
-void LLVMCodeGenerator::visit(AST::BinaryOperatorAST const &op)
+void LLVMCodeGenerator::visit(AST::NumberBinaryOperatorAST const &op)
 {
     op.acceptLeft(*this);
     op.acceptRight(*this);
@@ -95,9 +95,9 @@ void LLVMCodeGenerator::visit(AST::BinaryOperatorAST const &op)
     mStack.push(pValue);
 }
 
-void LLVMCodeGenerator::visit(AST::NumberAST const &op)
+void LLVMCodeGenerator::visit(AST::IntAST const &op)
 {
-    mStack.push(ConstantFP::get(*mLLVMContext, APFloat(op.getValue())));
+    mStack.push(ConstantInt::get(*mLLVMContext, APSInt(op.getValue())));
 }
 
 std::string LLVMCodeGenerator::generate(AST::IAST & ast)
@@ -181,6 +181,11 @@ void LLVMCodeGenerator::visit(const AST::IfAST &op)
 }
 
 void LLVMCodeGenerator::visit(const AST::WhileAST &op)
+{
+    //TODO: impl
+}
+
+void LLVMCodeGenerator::visit(const AST::StringAST &op)
 {
     //TODO: impl
 }

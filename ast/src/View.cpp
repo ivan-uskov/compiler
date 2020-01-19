@@ -1,6 +1,6 @@
 #include "ast/View.h"
-#include "../BinaryOperatorAST.h"
-#include "../NumberAST.h"
+#include "ast/NumberBinaryOperatorAST.h"
+#include "ast/IntAST.h"
 #include "../ExpressionPairAST.h"
 #include "../VariableDeclarationAST.h"
 #include "../AssignmentAST.h"
@@ -9,6 +9,7 @@
 #include "ast/CompareBinaryOperatorAST.h"
 #include "../IfAST.h"
 #include "../WhileAST.h"
+#include "../StringAST.h"
 
 using namespace AST;
 
@@ -16,7 +17,7 @@ View::View(std::ostream & out)
     : mOut(out)
 {}
 
-void View::visit(BinaryOperatorAST const& op)
+void View::visit(NumberBinaryOperatorAST const& op)
 {
     mOut << "(";
     op.acceptLeft(*this);
@@ -25,7 +26,7 @@ void View::visit(BinaryOperatorAST const& op)
     mOut << ")";
 }
 
-void View::visit(NumberAST const& op)
+void View::visit(IntAST const& op)
 {
     mOut << op.getValue();
 }
@@ -87,4 +88,9 @@ void View::visit(WhileAST const &op)
     mOut << "{" << std::endl << "    ";
     op.acceptStmt(*this);
     mOut << std::endl << "}" << std::endl; //TODO: add spaces
+}
+
+void View::visit(StringAST const &op)
+{
+    mOut << op.getValue();
 }

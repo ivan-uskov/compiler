@@ -15,21 +15,24 @@ namespace Token
     static const Type StatementListIf = NonTerminal | 0x102u;
     static const Type StatementListWhile = NonTerminal | 0x103u;
     static const Type Expression = NonTerminal | 0x200u;
-    static const Type Expression1 = NonTerminal | 0x201u;
-    static const Type Expression2 = NonTerminal | 0x202u;
-    static const Type CompareExpression = NonTerminal | 0x203u;
+    static const Type NumberExpression = NonTerminal | 0x201u;
+    static const Type NumberExpression1 = NonTerminal | 0x202u;
+    static const Type NumberExpression2 = NonTerminal | 0x203u;
+    static const Type CompareExpression = NonTerminal | 0x204u;
+    static const Type StringExpression = NonTerminal | 0x205u;
     static const Type VariableDeclaration = NonTerminal | 0x300u;
 
     static const Type Id = Terminal | 0x100u;                         // ([a-z]+[a-z0-9]*)
 
     static const Type StringLiteral = Terminal | 0x200u;              // (\'[^\']*\')
-    static const Type NumberLiteral = Terminal | 0x201u;                     // ([0-9]+)
+    static const Type IntLiteral = Terminal | 0x201u;                     // ([0-9]+)
 
     static const Type String = Terminal | 0x301u;                     // string
     static const Type Return = Terminal | 0x302u;                     // return
-    static const Type While = Terminal | 0x303u;                        // for
-    static const Type Number = Terminal | 0x304u;                     // number
+    static const Type While = Terminal | 0x303u;                      // for
+    static const Type Int = Terminal | 0x304u;                        // int
     static const Type If = Terminal | 0x305u;                         // if
+    static const Type Bool = Terminal | 0x306u;                       // bool
 
     static const Type And = Terminal | 0x400u;                        // &&
     static const Type Or = Terminal | 0x401u;                         // ||

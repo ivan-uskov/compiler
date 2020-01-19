@@ -6,14 +6,14 @@
 
 namespace AST
 {
-    class NumberAST : public IAST
+    class IntAST : public IAST
     {
     public:
-        explicit NumberAST(Token::Token const& t);
+        explicit IntAST(Token::Token const& t);
 
         void accept(IASTVisitor & v) const override;
 
-        double getValue() const;
+        int getValue() const;
 
         ValueType getResultType() const override;
 

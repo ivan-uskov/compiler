@@ -1,19 +1,19 @@
-#include "../BinaryOperatorAST.h"
+#include "ast/NumberBinaryOperatorAST.h"
 #include <stdexcept>
 
 using namespace AST;
 
-BinaryOperatorAST::BinaryOperatorAST(std::unique_ptr<IAST> && left, std::unique_ptr<IAST> && right, Type t)
+NumberBinaryOperatorAST::NumberBinaryOperatorAST(std::unique_ptr<IAST> && left, std::unique_ptr<IAST> && right, Type t)
         : mLeft(std::move(left))
         , mRight(std::move(right))
         , mType(t)
 {
-    if (mLeft->getResultType() != ValueType::Number)
+    if (mLeft->getResultType() != ValueType::Int)
     {
         throw std::logic_error("For operation " + typeToString(t) + " invalid left type" + valueTypeToString(mLeft->getResultType()));
     }
 
-    if (mRight->getResultType() != ValueType::Number)
+    if (mRight->getResultType() != ValueType::Int)
     {
         throw std::logic_error("For operation " + typeToString(t) + " invalid right type" + valueTypeToString(mRight->getResultType()));
     }
@@ -21,32 +21,32 @@ BinaryOperatorAST::BinaryOperatorAST(std::unique_ptr<IAST> && left, std::unique_
     mValueType = mLeft->getResultType();
 }
 
-void BinaryOperatorAST::accept(IASTVisitor & v) const
+void NumberBinaryOperatorAST::accept(IASTVisitor & v) const
 {
     v.visit(*this);
 }
 
-void BinaryOperatorAST::acceptLeft(IASTVisitor & v) const
+void NumberBinaryOperatorAST::acceptLeft(IASTVisitor & v) const
 {
     mLeft->accept(v);
 }
 
-void BinaryOperatorAST::acceptRight(IASTVisitor & v) const
+void NumberBinaryOperatorAST::acceptRight(IASTVisitor & v) const
 {
     mRight->accept(v);
 }
 
-BinaryOperatorAST::Type BinaryOperatorAST::getType() const
+NumberBinaryOperatorAST::Type NumberBinaryOperatorAST::getType() const
 {
     return mType;
 }
 
-ValueType BinaryOperatorAST::getResultType() const
+ValueType NumberBinaryOperatorAST::getResultType() const
 {
     return mValueType;
 }
 
-std::string BinaryOperatorAST::typeToString(BinaryOperatorAST::Type t)
+std::string NumberBinaryOperatorAST::typeToString(NumberBinaryOperatorAST::Type t)
 {
     switch (t)
     {
@@ -65,9 +65,9 @@ std::string BinaryOperatorAST::typeToString(BinaryOperatorAST::Type t)
 
 namespace AST
 {
-    std::ostream & operator << (std::ostream & out, BinaryOperatorAST::Type t)
+    std::ostream & operator << (std::ostream & out, NumberBinaryOperatorAST::Type t)
     {
-        out << BinaryOperatorAST::typeToString(t);
+        out << NumberBinaryOperatorAST::typeToString(t);
         return out;
     }
 }

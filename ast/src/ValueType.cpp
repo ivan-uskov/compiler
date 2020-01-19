@@ -17,8 +17,8 @@ namespace AST
                 return "error";
             case ValueType::Void:
                 return "void";
-            case ValueType::Number:
-                return "number";
+            case ValueType::Int:
+                return "int";
             case ValueType::String:
                 return "string";
             case ValueType::Bool:

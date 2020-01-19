@@ -20,20 +20,23 @@ namespace Token
             case Token::StatementListIf:  return "StmtListIf";
             case Token::StatementListWhile: return "StmtListWhile";
             case Token::Expression:       return "Expr";
-            case Token::Expression1:      return "Expr1";
-            case Token::Expression2:      return "Expr2";
+            case Token::NumberExpression:       return "NumExpr";
+            case Token::NumberExpression1:      return "NumExpr1";
+            case Token::NumberExpression2:      return "NumExpr2";
             case Token::CompareExpression:   return "CompareExpr";
+            case Token::StringExpression:   return "StrExpr";
             case Token::VariableDeclaration: return "VarDecl";
 
             case Token::Id:               return "id";
             case Token::StringLiteral:    return "stringLiteral";
-            case Token::NumberLiteral:    return "numberLiteral";
+            case Token::IntLiteral:       return "intLiteral";
 
             case Token::String:           return "string";
             case Token::Return:           return "return";
             case Token::While:            return "while";
-            case Token::Number:           return "number";
+            case Token::Int:              return "int";
             case Token::If:               return "if";
+            case Token::Bool:             return "bool";
 
             case Token::And:              return "&&";
             case Token::Or:               return "||";

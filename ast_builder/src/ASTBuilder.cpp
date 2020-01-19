@@ -1,8 +1,8 @@
 #include <stdexcept>
 #include "ast_builder/ASTBuilder.h"
 #include "slr_parser/Parser.h"
-#include "ast/NumberAST.h"
-#include "ast/BinaryOperatorAST.h"
+#include "ast/IntAST.h"
+#include "ast/NumberBinaryOperatorAST.h"
 #include "ast/ExpressionPairAST.h"
 #include "ast/VariableDeclarationAST.h"
 #include "ast/AssignmentAST.h"
@@ -11,6 +11,7 @@
 #include "ast/CompareBinaryOperatorAST.h"
 #include "ast/IfAST.h"
 #include "ast/WhileAST.h"
+#include "ast/StringAST.h"
 
 using namespace SLR;
 using namespace AST;
@@ -18,7 +19,7 @@ using namespace AST;
 namespace
 {
     template<typename T>
-    Rules::Action getBinaryOperatorASTReducer(T & stack, BinaryOperatorAST::Type t)
+    Rules::Action getNumberBinaryOperatorASTReducer(T & stack, NumberBinaryOperatorAST::Type t)
     {
         return [&stack, t](auto const& tokens) {
             if (stack.size() < 2)
@@ -31,7 +32,7 @@ namespace
             auto left = std::move(stack.top());
             stack.pop();
 
-            stack.emplace(new BinaryOperatorAST(std::move(left), std::move(right), t));
+            stack.emplace(new NumberBinaryOperatorAST(std::move(left), std::move(right), t));
         };
     }
 
@@ -44,25 +45,38 @@ namespace
                 throw std::logic_error("too small stack for unary minus");
             }
 
-            auto left = std::make_unique<NumberAST>(Token::Token{Token::NumberLiteral, "0"});
+            auto left = std::make_unique<IntAST>(Token::Token{Token::IntLiteral, "0"});
 
             auto right = std::move(stack.top());
             stack.pop();
 
-            stack.emplace(new BinaryOperatorAST(std::move(left), std::move(right), BinaryOperatorAST::Type::Sub));
+            stack.emplace(new NumberBinaryOperatorAST(std::move(left), std::move(right), NumberBinaryOperatorAST::Type::Sub));
         };
     }
 
     template<typename T>
-    Rules::Action getNumberASTReducer(T & stack)
+    Rules::Action getIntASTReducer(T & stack)
     {
         return [&stack](auto const& tokens) {
             if (tokens.size() != 1)
             {
-                throw std::logic_error("invalid tokens for reduce number");
+                throw std::logic_error("invalid tokens for reduce int");
             }
 
-            stack.emplace(new NumberAST(tokens[0]));
+            stack.emplace(new IntAST(tokens[0]));
+        };
+    }
+
+    template<typename T>
+    Rules::Action getStringASTReducer(T & stack)
+    {
+        return [&stack](auto const& tokens) {
+            if (tokens.size() != 1)
+            {
+                throw std::logic_error("invalid tokens for reduce string");
+            }
+
+            stack.emplace(new StringAST(tokens[0]));
         };
     }
 
@@ -167,9 +181,8 @@ namespace
     template<typename T>
     Rules::Action getFunctionCallASTReducer(T & stack)
     {
-        // only print function supported with 1 argument
         return [&stack](auto const& tokens) {
-            if (tokens.size() != 4 || stack.empty() || tokens[3].value != "print")
+            if (tokens.size() != 4 || stack.empty() || !FunctionCallAST::isSupportedFunctionName(tokens[3].value))
             {
                 throw std::logic_error("invalid state for reduce function call");
             }
@@ -177,7 +190,7 @@ namespace
             auto arg = std::move(stack.top());
             stack.pop();
 
-            stack.emplace(new FunctionCallAST(std::move(arg)));
+            stack.emplace(new FunctionCallAST(tokens[3].value, std::move(arg)));
         };
     }
 
@@ -238,41 +251,49 @@ namespace
 
 Rules::Table ASTBuilder::getRules()
 {
-    return  {
-            {Token::Root,            {Token::StatementList},                                                                   getRootReducer(mStack)},
+    return {
+            {Token::Root,               {Token::StatementList},                                                                                 getRootReducer(
+                    mStack)},
 
             {Token::StatementListWhile, {Token::StatementList}},
-            {Token::StatementListIf, {Token::StatementList}},
-            {Token::StatementList,   {Token::StatementList, Token::Semicolon, Token::Statement},                               getExpressionListReducer(mStack)},
-            {Token::StatementList,   {Token::Statement}},
+            {Token::StatementListIf,    {Token::StatementList}},
+            {Token::StatementList,      {Token::StatementList,     Token::Semicolon,        Token::Statement},                                  getExpressionListReducer(
+                    mStack)},
+            {Token::StatementList,      {Token::Statement}},
 
-            {Token::Statement,         {Token::Number,          Token::Id},                                                                 getVariableDeclarationASTReducer(mStack, mVariables.top(), AST::ValueType::Number)},
-            {Token::Statement,         {Token::String,          Token::Id},                                                                 getVariableDeclarationASTReducer(mStack, mVariables.top(), AST::ValueType::String)},
-            {Token::Statement,         {Token::Id,              Token::Equals,          Token::Expression},                                 getAssignmentASTReducer(mStack, mVariables.top())},
-            {Token::Statement,         {Token::Id,              Token::OpenParenthesis, Token::Expression,        Token::CloseParenthesis}, getFunctionCallASTReducer(mStack)},
-            {Token::Statement,         {Token::If,              Token::OpenParenthesis, Token::CompareExpression, Token::CloseParenthesis,
-                                     Token::OpenBrace,   Token::StatementListIf, Token::CloseBrace},                                        getIfASTReducer(mStack)},
-            {Token::Statement,         {Token::While,           Token::OpenParenthesis, Token::CompareExpression, Token::CloseParenthesis,
-                                             Token::OpenBrace,   Token::StatementListWhile, Token::CloseBrace},                             getWhileASTReducer(mStack)},
+            {Token::Statement,          {Token::Int, Token::Id}, getVariableDeclarationASTReducer(mStack, mVariables.top(), AST::ValueType::Int)},
+            {Token::Statement,          {Token::String, Token::Id}, getVariableDeclarationASTReducer(mStack, mVariables.top(), AST::ValueType::String)},
+            {Token::Statement,          {Token::Bool, Token::Id}, getVariableDeclarationASTReducer(mStack, mVariables.top(), AST::ValueType::Bool)},
 
-            {Token::CompareExpression, {Token::Expression,      Token::Less,            Token::Expression}, getCompareBinaryOperatorASTReducer(
-                    mStack, CompareBinaryOperatorAST::Type::Less)},
-            {Token::CompareExpression, {Token::Expression,      Token::More,            Token::Expression},                                 getCompareBinaryOperatorASTReducer(
-                    mStack, CompareBinaryOperatorAST::Type::More)},
-            {Token::CompareExpression, {Token::Expression,      Token::DoubleEquals,    Token::Expression},                                 getCompareBinaryOperatorASTReducer(
-                    mStack, CompareBinaryOperatorAST::Type::Equals)},
+            {Token::Statement,          {Token::Id, Token::Equals, Token::Expression}, getAssignmentASTReducer(mStack, mVariables.top())},
+            {Token::Statement,          {Token::Id, Token::OpenParenthesis,  Token::Expression,  Token::CloseParenthesis}, getFunctionCallASTReducer(mStack)},
 
-            {Token::Expression,        {Token::Expression,      Token::Plus,            Token::Expression1},                                getBinaryOperatorASTReducer(mStack, BinaryOperatorAST::Type::Sum)},
-            {Token::Expression,        {Token::Expression,      Token::Minus,           Token::Expression1},                                getBinaryOperatorASTReducer(mStack, BinaryOperatorAST::Type::Sub)},
-            {Token::Expression,        {Token::Expression1}},
-            {Token::Expression1,       {Token::Expression1,     Token::Mult,            Token::Expression2},                                getBinaryOperatorASTReducer(mStack, BinaryOperatorAST::Type::Mul)},
-            {Token::Expression1,       {Token::Expression1,     Token::Div,             Token::Expression2},                                getBinaryOperatorASTReducer(mStack, BinaryOperatorAST::Type::Div)},
-            {Token::Expression1,       {Token::Expression2}},
+            {Token::Statement,          {Token::If, Token::OpenParenthesis,  Token::CompareExpression, Token::CloseParenthesis,
+                                                Token::OpenBrace, Token::StatementListIf,    Token::CloseBrace}, getIfASTReducer(mStack)},
+            {Token::Statement,          {Token::While,             Token::OpenParenthesis,  Token::CompareExpression, Token::CloseParenthesis,
+                                                Token::OpenBrace, Token::StatementListWhile, Token::CloseBrace}, getWhileASTReducer(mStack)},
 
-            {Token::Expression2,       {Token::OpenParenthesis, Token::Expression,      Token::CloseParenthesis}},
-            {Token::Expression2,       {Token::Minus,           Token::Expression2},                                                        getUnaryMinusASTReducer(mStack)},
-            {Token::Expression2,   {Token::NumberLiteral}, getNumberASTReducer(mStack)},
-            {Token::Expression2,   {Token::Id}, getVariableAccessASTReducer(mStack,  mVariables.top())}
+            {Token::Expression, {Token::NumberExpression}},
+            {Token::Expression, {Token::StringExpression}},
+            {Token::Expression, {Token::CompareExpression}},
+
+            {Token::StringExpression,   {Token::StringLiteral}, getStringASTReducer(mStack)},
+
+            {Token::CompareExpression,  {Token::NumberExpression,  Token::Less, Token::NumberExpression}, getCompareBinaryOperatorASTReducer(mStack, CompareBinaryOperatorAST::Type::Less)},
+            {Token::CompareExpression,  {Token::NumberExpression,  Token::More, Token::NumberExpression}, getCompareBinaryOperatorASTReducer(mStack, CompareBinaryOperatorAST::Type::More)},
+            {Token::CompareExpression,  {Token::NumberExpression,  Token::DoubleEquals, Token::NumberExpression}, getCompareBinaryOperatorASTReducer(mStack, CompareBinaryOperatorAST::Type::Equals)},
+
+            {Token::NumberExpression,   {Token::NumberExpression,  Token::Plus, Token::NumberExpression1}, getNumberBinaryOperatorASTReducer(mStack, NumberBinaryOperatorAST::Type::Sum)},
+            {Token::NumberExpression,   {Token::NumberExpression,  Token::Minus, Token::NumberExpression1}, getNumberBinaryOperatorASTReducer(mStack, NumberBinaryOperatorAST::Type::Sub)},
+            {Token::NumberExpression,   {Token::NumberExpression1}},
+            {Token::NumberExpression1,  {Token::NumberExpression1, Token::Mult, Token::NumberExpression2}, getNumberBinaryOperatorASTReducer(mStack, NumberBinaryOperatorAST::Type::Mul)},
+            {Token::NumberExpression1,  {Token::NumberExpression1, Token::Div, Token::NumberExpression2}, getNumberBinaryOperatorASTReducer(mStack, NumberBinaryOperatorAST::Type::Div)},
+            {Token::NumberExpression1,  {Token::NumberExpression2}},
+
+            {Token::NumberExpression2,  {Token::OpenParenthesis, Token::NumberExpression, Token::CloseParenthesis}},
+            {Token::NumberExpression2,  {Token::Minus, Token::NumberExpression2}, getUnaryMinusASTReducer(mStack)},
+            {Token::NumberExpression2,  {Token::IntLiteral}, getIntASTReducer(mStack)},
+            {Token::NumberExpression2,  {Token::Id}, getVariableAccessASTReducer(mStack, mVariables.top())}
     };
 }
 

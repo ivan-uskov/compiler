@@ -21,8 +21,8 @@ namespace Translation
 
         std::string generate(AST::IAST & ast);
 
-        void visit(AST::BinaryOperatorAST const& op) override;
-        void visit(AST::NumberAST const& op) override;
+        void visit(AST::NumberBinaryOperatorAST const& op) override;
+        void visit(AST::IntAST const& op) override;
         void visit(const AST::ExpressionPairAST &op) override;
         void visit(const AST::VariableDeclarationAST &op) override;
         void visit(const AST::AssignmentAST &op) override;
@@ -31,6 +31,7 @@ namespace Translation
         void visit(const AST::CompareBinaryOperatorAST &op) override;
         void visit(const AST::IfAST &op) override;
         void visit(const AST::WhileAST &op) override;
+        void visit(const AST::StringAST &op) override;
 
     private:
         std::vector<llvm::Value *> getValues() const;

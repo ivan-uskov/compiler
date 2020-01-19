@@ -1,6 +1,6 @@
 #include "../Interpreter.h"
-#include "ast/NumberAST.h"
-#include "ast/BinaryOperatorAST.h"
+#include "ast/IntAST.h"
+#include "ast/NumberBinaryOperatorAST.h"
 #include "ast/ExpressionPairAST.h"
 #include "ast/VariableDeclarationAST.h"
 #include "ast/VariableAccessAST.h"
@@ -9,6 +9,7 @@
 #include "ast/CompareBinaryOperatorAST.h"
 #include "ast/IfAST.h"
 #include "ast/WhileAST.h"
+#include "ast/StringAST.h"
 
 #include <stdexcept>
 
@@ -17,21 +18,21 @@ using namespace AST;
 
 namespace
 {
-    double calc(double left, double right, BinaryOperatorAST::Type t)
+    double calc(double left, double right, NumberBinaryOperatorAST::Type t)
     {
-        if (t == BinaryOperatorAST::Type::Sum)
+        if (t == NumberBinaryOperatorAST::Type::Sum)
         {
             return left + right;
         }
-        else if (t == BinaryOperatorAST::Type::Sub)
+        else if (t == NumberBinaryOperatorAST::Type::Sub)
         {
             return left - right;
         }
-        else if (t == BinaryOperatorAST::Type::Mul)
+        else if (t == NumberBinaryOperatorAST::Type::Mul)
         {
             return left * right;
         }
-        else if (t == BinaryOperatorAST::Type::Div)
+        else if (t == NumberBinaryOperatorAST::Type::Div)
         {
             return left / right;
         }
@@ -58,7 +59,7 @@ namespace
     }
 }
 
-void Interpreter::visit(BinaryOperatorAST const& op)
+void Interpreter::visit(NumberBinaryOperatorAST const& op)
 {
     op.acceptLeft(*this);
     op.acceptRight(*this);
@@ -72,11 +73,11 @@ void Interpreter::visit(BinaryOperatorAST const& op)
     mStack.pop();
     auto left = mStack.top();
     mStack.pop();
-    if (right.type != AST::ValueType::Number)
+    if (right.type != AST::ValueType::Int)
     {
         throw std::logic_error("invalid right operand for evaluating binary ast");
     }
-    if (left.type != AST::ValueType::Number)
+    if (left.type != AST::ValueType::Int)
     {
         throw std::logic_error("invalid left operand for evaluating binary ast");
     }
@@ -85,9 +86,9 @@ void Interpreter::visit(BinaryOperatorAST const& op)
     mStack.push(left);
 }
 
-void Interpreter::visit(NumberAST const& op)
+void Interpreter::visit(IntAST const& op)
 {
-    mStack.push(Var{AST::ValueType::Number, op.getValue()});
+    mStack.push(Var{AST::ValueType::Int, double(op.getValue())});
 }
 
 void Interpreter::visit(ExpressionPairAST const &op)
@@ -120,7 +121,7 @@ void Interpreter::visit(AssignmentAST const &op)
 
     switch (value.type)
     {
-        case ValueType::Number:
+        case ValueType::Int:
             mScope[op.getId()].numVal = value.numVal;
             break;
         case ValueType::String:
@@ -139,7 +140,7 @@ void Interpreter::visit(VariableAccessAST const &op)
     Var var{op.getResultType()};
     switch (var.type)
     {
-        case ValueType::Number:
+        case ValueType::Int:
             var.numVal = mScope[op.getId()].numVal;
             break;
         case ValueType::String:
@@ -168,17 +169,22 @@ void Interpreter::visit(FunctionCallAST const &op)
 
     switch (arg.type)
     {
-        case ValueType::Number:
+        case ValueType::Int:
             mOut << arg.numVal;
             break;
         case ValueType::String:
             mOut << arg.strVal;
             break;
         case ValueType::Bool:
-            mOut << arg.boolVal;
+            mOut << (arg.boolVal ? "true" : "false");
             break;
         default:
             throw std::logic_error("invalid var type error");
+    }
+
+    if (op.getName() == FunctionCallAST::PRINTLN)
+    {
+        mOut << std::endl;
     }
 }
 
@@ -201,11 +207,11 @@ void Interpreter::visit(CompareBinaryOperatorAST const &op)
     mStack.pop();
     auto left = mStack.top();
     mStack.pop();
-    if (right.type != AST::ValueType::Number)
+    if (right.type != AST::ValueType::Int)
     {
         throw std::logic_error("invalid right operand for evaluating binary ast");
     }
-    if (left.type != AST::ValueType::Number)
+    if (left.type != AST::ValueType::Int)
     {
         throw std::logic_error("invalid left operand for evaluating binary ast");
     }
@@ -266,4 +272,9 @@ void Interpreter::visit(WhileAST const &op)
             break;
         }
     }
+}
+
+void Interpreter::visit(StringAST const &op)
+{
+    mStack.push(Var{AST::ValueType::String, 0, false, op.getValue()});
 }

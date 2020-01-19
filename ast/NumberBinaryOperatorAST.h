@@ -4,7 +4,7 @@
 
 namespace AST
 {
-    class BinaryOperatorAST : public IAST
+    class NumberBinaryOperatorAST : public IAST
     {
     public:
         enum class Type
@@ -14,7 +14,7 @@ namespace AST
             Div,
             Sub
         };
-        explicit BinaryOperatorAST(std::unique_ptr<IAST> && left, std::unique_ptr<IAST> && right, Type t);
+        explicit NumberBinaryOperatorAST(std::unique_ptr<IAST> && left, std::unique_ptr<IAST> && right, Type t);
         void accept(IASTVisitor & v) const override;
         void acceptLeft(IASTVisitor & v) const;
         void acceptRight(IASTVisitor & v) const;
@@ -22,7 +22,7 @@ namespace AST
 
         ValueType getResultType() const override;
 
-        static std::string typeToString(BinaryOperatorAST::Type t);
+        static std::string typeToString(NumberBinaryOperatorAST::Type t);
     private:
         std::unique_ptr<IAST> mLeft;
         std::unique_ptr<IAST> mRight;
@@ -30,5 +30,5 @@ namespace AST
         ValueType mValueType;
     };
 
-    std::ostream & operator << (std::ostream & out, AST::BinaryOperatorAST::Type t);
+    std::ostream & operator << (std::ostream & out, AST::NumberBinaryOperatorAST::Type t);
 }
