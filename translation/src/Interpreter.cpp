@@ -13,12 +13,34 @@
 #include "ast/DoubleAST.h"
 
 #include <stdexcept>
+#include <sstream>
+#include <algorithm>
 
 using namespace Translation;
 using namespace AST;
 
 namespace
 {
+    template <typename T>
+    std::string arrayToString(std::vector<T> const& arr)
+    {
+        std::ostringstream ostrm;
+        std::ostream_iterator<T> outIt(ostrm, ", ");
+        std::copy(arr.begin(), arr.end(), outIt);
+        return "{" + ostrm.str() + "}";
+    }
+
+    std::string arrayToString(std::vector<bool> const& arr)
+    {
+        std::vector<std::string> prepared;
+        prepared.reserve(arr.size());
+        for (auto v : arr)
+        {
+            prepared.emplace_back(v ? "true" : "false");
+        }
+        return arrayToString(prepared);
+    }
+
     int calc(int left, int right, NumberBinaryOperatorAST::Type t)
     {
         switch (t)
@@ -155,6 +177,18 @@ void Interpreter::visit(AssignmentAST const &op)
         case ValueType::Double:
             mScope[op.getId()].doubleVal = value.doubleVal;
             break;
+        case ValueType::IntArray:
+            mScope[op.getId()].intArray = value.intArray;
+            break;
+        case ValueType::BoolArray:
+            mScope[op.getId()].boolArray = value.boolArray;
+            break;
+        case ValueType::StringArray:
+            mScope[op.getId()].stringArray = value.stringArray;
+            break;
+        case ValueType::DoubleArray:
+            mScope[op.getId()].doubleArray = value.doubleArray;
+            break;
         default:
             throw std::logic_error("unassignable type error");
     }
@@ -177,8 +211,20 @@ void Interpreter::visit(VariableAccessAST const &op)
         case ValueType::Double:
             var.doubleVal = mScope[op.getId()].doubleVal;
             break;
+        case ValueType::IntArray:
+            var.intArray = mScope[op.getId()].intArray;
+            break;
+        case ValueType::BoolArray:
+            var.boolArray = mScope[op.getId()].boolArray;
+            break;
+        case ValueType::StringArray:
+            var.stringArray = mScope[op.getId()].stringArray;
+            break;
+        case ValueType::DoubleArray:
+            var.doubleArray = mScope[op.getId()].doubleArray;
+            break;
         default:
-            throw std::logic_error("invalid var type error");
+            throw std::logic_error("invalid var type for access error");
     }
     mStack.push(var);
 }
@@ -208,6 +254,19 @@ void Interpreter::visit(FunctionCallAST const &op)
             break;
         case ValueType::Double:
             mOut << arg.doubleVal;
+            break;
+        case ValueType::IntArray:
+            mOut << arrayToString(arg.intArray);
+            break;
+        case ValueType::BoolArray:
+            mOut << arrayToString(arg.boolArray);
+            break;
+        case ValueType::StringArray:
+            mOut << arrayToString(arg.stringArray);
+            break;
+        case ValueType::DoubleArray:
+            mOut << arrayToString(arg.doubleArray);
+            break;
         default:
             throw std::logic_error("invalid var type error");
     }

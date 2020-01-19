@@ -127,7 +127,7 @@ namespace
     Rules::Action getVariableDeclarationASTReducer(T & stack, S & scope, AST::ValueType v)
     {
         return [&stack, &scope, v](auto const& tokens) {
-            if (tokens.size() != 2)
+            if (!(tokens.size() == 2 || (tokens.size() == 4 && isArrayType(v))))
             {
                 throw std::logic_error("invalid tokens for reduce vardecl");
             }
@@ -277,6 +277,11 @@ Rules::Table ASTBuilder::getRules()
             {Token::Statement,          {Token::Int, Token::Id}, getVariableDeclarationASTReducer(mStack, mVariables.top(), AST::ValueType::Int)},
             {Token::Statement,          {Token::String, Token::Id}, getVariableDeclarationASTReducer(mStack, mVariables.top(), AST::ValueType::String)},
             {Token::Statement,          {Token::Bool, Token::Id}, getVariableDeclarationASTReducer(mStack, mVariables.top(), AST::ValueType::Bool)},
+
+            {Token::Statement,          {Token::Double, Token::OpenSquareBrace, Token::CloseSquareBrace, Token::Id}, getVariableDeclarationASTReducer(mStack, mVariables.top(), AST::ValueType::DoubleArray)},
+            {Token::Statement,          {Token::Int, Token::OpenSquareBrace, Token::CloseSquareBrace, Token::Id}, getVariableDeclarationASTReducer(mStack, mVariables.top(), AST::ValueType::IntArray)},
+            {Token::Statement,          {Token::String, Token::OpenSquareBrace, Token::CloseSquareBrace, Token::Id}, getVariableDeclarationASTReducer(mStack, mVariables.top(), AST::ValueType::StringArray)},
+            {Token::Statement,          {Token::Bool, Token::OpenSquareBrace, Token::CloseSquareBrace, Token::Id}, getVariableDeclarationASTReducer(mStack, mVariables.top(), AST::ValueType::BoolArray)},
 
             {Token::Statement,          {Token::Id, Token::Equals, Token::Expression}, getAssignmentASTReducer(mStack, mVariables.top())},
             {Token::Statement,          {Token::Id, Token::OpenParenthesis,  Token::Expression,  Token::CloseParenthesis}, getFunctionCallASTReducer(mStack)},

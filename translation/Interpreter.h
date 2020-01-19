@@ -25,7 +25,6 @@ namespace Translation
         void visit(const AST::IfAST &op) override;
         void visit(const AST::WhileAST &op) override;
         void visit(const AST::StringAST &op) override;
-
         void visit(const AST::DoubleAST &op) override;
 
     private:
@@ -36,6 +35,10 @@ namespace Translation
             bool boolVal = false;
             std::string strVal;
             double doubleVal = 0.0;
+            std::vector<int> intArray;
+            std::vector<bool> boolArray;
+            std::vector<std::string> stringArray;
+            std::vector<double> doubleArray;
         };
 
         std::stack<Var> mStack;
