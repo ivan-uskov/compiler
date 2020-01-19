@@ -13,6 +13,7 @@ namespace Lexer
                 {Token::Int,          "int"},
                 {Token::If,           "if"},
                 {Token::Bool,         "bool"},
+                {Token::Double,        "double"},
 
                 {Token::And,          "&&"},
                 {Token::Or,           "||"},
@@ -31,14 +32,17 @@ namespace Lexer
                 {Token::Plus,             "+"},
                 {Token::Minus,            "-"},
                 {Token::Mult,             "*"},
-                {Token::Div,               "/"},
-                {Token::Mod,               "%"}
+                {Token::Div,              "/"},
+                {Token::Mod,              "%"},
+                {Token::OpenSquareBrace,  "["},
+                {Token::CloseSquareBrace, "]"}
         };
 
         m_regexPatterns = {
                 {Token::Id,    regex("^([a-zA-Z]+[a-zA-Z0-9]*)(.*)$")},
                 {Token::StringLiteral, regex("^(\'[^\']*\')(.*)$")},
-                {Token::IntLiteral, regex("^([0-9]+)(.*)$")}
+                {Token::IntLiteral, regex("^([0-9]+)(.*)$")},
+                {Token::DoubleLiteral, regex("^([0-9]+\.[0-9]+)(.*)$")},
         };
     }
 

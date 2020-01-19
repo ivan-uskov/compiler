@@ -30,6 +30,7 @@ namespace Token
             case Token::Id:               return "id";
             case Token::StringLiteral:    return "stringLiteral";
             case Token::IntLiteral:       return "intLiteral";
+            case Token::DoubleLiteral:    return "doubleLiteral";
 
             case Token::String:           return "string";
             case Token::Return:           return "return";
@@ -37,6 +38,7 @@ namespace Token
             case Token::Int:              return "int";
             case Token::If:               return "if";
             case Token::Bool:             return "bool";
+            case Token::Double:           return "double";
 
             case Token::And:              return "&&";
             case Token::Or:               return "||";
@@ -57,6 +59,8 @@ namespace Token
             case Token::Mult:             return "*";
             case Token::Div:              return "/";
             case Token::Mod:              return "%";
+            case Token::OpenSquareBrace:  return "[";
+            case Token::CloseSquareBrace: return "]";
 
             case Token::End:              return "end";
             default:                            return "Unexpected token type";

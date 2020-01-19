@@ -25,7 +25,8 @@ namespace Token
     static const Type Id = Terminal | 0x100u;                         // ([a-z]+[a-z0-9]*)
 
     static const Type StringLiteral = Terminal | 0x200u;              // (\'[^\']*\')
-    static const Type IntLiteral = Terminal | 0x201u;                     // ([0-9]+)
+    static const Type IntLiteral = Terminal | 0x201u;                 // ([0-9]+)
+    static const Type DoubleLiteral = Terminal | 0x202u;              // ([0-9]+\.[0-9]+)
 
     static const Type String = Terminal | 0x301u;                     // string
     static const Type Return = Terminal | 0x302u;                     // return
@@ -33,6 +34,7 @@ namespace Token
     static const Type Int = Terminal | 0x304u;                        // int
     static const Type If = Terminal | 0x305u;                         // if
     static const Type Bool = Terminal | 0x306u;                       // bool
+    static const Type Double = Terminal | 0x307u;                     // double
 
     static const Type And = Terminal | 0x400u;                        // &&
     static const Type Or = Terminal | 0x401u;                         // ||
@@ -53,6 +55,8 @@ namespace Token
     static const Type Mult = Terminal | 0x40Fu;                       // *
     static const Type Div = Terminal | 0x410u;                        // /
     static const Type Mod = Terminal | 0x411u;                        // %
+    static const Type OpenSquareBrace = Terminal | 0x412u;            // [
+    static const Type CloseSquareBrace = Terminal | 0x413u;           // ]
 
     static const Type End = Terminal | 0x500u;                        // ^Z
     static const Type Invalid = Terminal | 0x600u;
