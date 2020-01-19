@@ -194,3 +194,8 @@ void LLVMCodeGenerator::visit(const AST::DoubleAST &op)
 {
     //TODO: impl
 }
+
+void LLVMCodeGenerator::visit(const AST::ArrayAssignmentAST &op)
+{
+    //TODO: impl
+}

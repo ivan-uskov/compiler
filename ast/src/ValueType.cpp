@@ -19,6 +19,23 @@ namespace AST
         return t == ValueType::IntArray || t == ValueType::DoubleArray || t == ValueType::BoolArray || t == ValueType::StringArray;
     }
 
+    ValueType getArrayItemType(ValueType const& t)
+    {
+        switch (t)
+        {
+            case ValueType::DoubleArray:
+                return ValueType::Double;
+            case ValueType::IntArray:
+                return ValueType::Int;
+            case ValueType::StringArray:
+                return ValueType::String;
+            case ValueType::BoolArray:
+                return ValueType::Bool;
+            default:
+                throw std::logic_error(valueTypeToString(t) + " is not a array type");
+        }
+    }
+
     std::string valueTypeToString(ValueType const& t)
     {
         switch (t)

@@ -11,6 +11,7 @@
 #include "../WhileAST.h"
 #include "../StringAST.h"
 #include "../DoubleAST.h"
+#include "../ArrayAssignmentAST.h"
 
 using namespace AST;
 
@@ -99,4 +100,20 @@ void View::visit(StringAST const &op)
 void View::visit(DoubleAST const &op)
 {
     mOut << op.getValue();
+}
+
+void View::visit(ArrayAssignmentAST const &op)
+{
+    if (op.hasIndex())
+    {
+        mOut << op.getId() << "[";
+        op.acceptIndex(*this);
+        mOut << "] = ";
+        op.acceptValue(*this);
+    }
+    else
+    {
+        mOut << op.getId() << "[] = ";
+        op.acceptValue(*this);
+    }
 }

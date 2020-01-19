@@ -11,10 +11,12 @@
 #include "ast/WhileAST.h"
 #include "ast/StringAST.h"
 #include "ast/DoubleAST.h"
+#include "ast/ArrayAssignmentAST.h"
 
 #include <stdexcept>
 #include <sstream>
 #include <algorithm>
+#include <functional>
 
 using namespace Translation;
 using namespace AST;
@@ -25,8 +27,14 @@ namespace
     std::string arrayToString(std::vector<T> const& arr)
     {
         std::ostringstream ostrm;
-        std::ostream_iterator<T> outIt(ostrm, ", ");
-        std::copy(arr.begin(), arr.end(), outIt);
+        for (size_t i = 0; i < arr.size(); ++i)
+        {
+            ostrm << arr[i];
+            if (i < arr.size() - 1)
+            {
+                ostrm << ", ";
+            }
+        }
         return "{" + ostrm.str() + "}";
     }
 
@@ -387,4 +395,70 @@ void Interpreter::visit(StringAST const &op)
 void Interpreter::visit(DoubleAST const &op)
 {
     mStack.push(Var{AST::ValueType::Double, 0, false, "", op.getValue()});
+}
+
+void Interpreter::visit(ArrayAssignmentAST const &op)
+{
+    op.acceptValue(*this);
+
+    if (mStack.empty())
+    {
+        throw std::logic_error("invalid stack size for evaluating array assignment");
+    }
+
+    auto value = mStack.top();
+    mStack.pop();
+
+    ValueType arrayType = mScope[op.getId()].type;
+    if (!(isArrayType(arrayType) && (getArrayItemType(arrayType) == value.type)))
+    {
+        throw std::logic_error("assignment type missmatch");
+    }
+
+    auto assigner = [&](auto & collection, auto val) {
+        if (op.hasIndex())
+        {
+            op.acceptIndex(*this);
+            if (mStack.empty())
+            {
+                throw std::logic_error("invalid stack size for evaluating array existing value assignment");
+            }
+
+            auto index = mStack.top();
+            mStack.pop();
+            if (index.type != ValueType::Int)
+            {
+                throw std::logic_error("invalid index type: " + valueTypeToString(index.type));
+            }
+
+            if (index.intVal < 0 || index.intVal >= collection.size())
+            {
+                throw std::out_of_range(op.getId() + "has not " + std::to_string(index.intVal) + " index");
+            }
+
+            collection[index.intVal] = val;
+        }
+        else
+        {
+            collection.push_back(val);
+        }
+    };
+
+    switch (value.type)
+    {
+        case ValueType::Int:
+            assigner(mScope[op.getId()].intArray, value.intVal);
+            break;
+        case ValueType::String:
+            assigner(mScope[op.getId()].stringArray, value.strVal);
+            break;
+        case ValueType::Bool:
+            assigner(mScope[op.getId()].boolArray, value.boolVal);
+            break;
+        case ValueType::Double:
+            assigner(mScope[op.getId()].doubleArray, value.doubleVal);
+            break;
+        default:
+            throw std::logic_error("v to arr, unassignable type error");
+    }
 }

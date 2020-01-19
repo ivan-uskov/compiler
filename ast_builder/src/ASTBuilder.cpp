@@ -13,6 +13,7 @@
 #include "ast/WhileAST.h"
 #include "ast/StringAST.h"
 #include "ast/DoubleAST.h"
+#include "ast/ArrayAssignmentAST.h"
 
 using namespace SLR;
 using namespace AST;
@@ -175,6 +176,39 @@ namespace
     }
 
     template<typename T, typename S>
+    Rules::Action getArrayAssignmentASTReducer(T & stack, S & scope)
+    {
+        return [&stack, &scope](auto const& tokens) {
+            if (tokens.size() != 5 || stack.empty())
+            {
+                throw std::logic_error("invalid state for reduce array assignment");
+            }
+
+            auto const& id = tokens[4];
+            if (scope.find(id.value) == scope.end())
+            {
+                throw std::logic_error("array assignment to a nonexistent variable: " + Token::tokenDescription(id));
+            }
+
+            auto value = std::move(stack.top());
+            stack.pop();
+            auto varType = scope[id.value];
+            auto argType = value->getResultType();
+
+            if (!(isArrayType(varType) && getArrayItemType(varType) == argType))
+            {
+                throw std::logic_error(
+                        "array assignment types do not match: " +
+                        AST::valueTypeToString(varType) + " <> " + AST::valueTypeToString(argType) + " " +
+                        Token::tokenDescription(id)
+                );
+            }
+
+            stack.emplace(new ArrayAssignmentAST(id, std::move(value)));
+        };
+    }
+
+    template<typename T, typename S>
     Rules::Action getVariableAccessASTReducer(T & stack, S & scope)
     {
         return [&stack, &scope](auto const& tokens) {
@@ -284,6 +318,8 @@ Rules::Table ASTBuilder::getRules()
             {Token::Statement,          {Token::Bool, Token::OpenSquareBrace, Token::CloseSquareBrace, Token::Id}, getVariableDeclarationASTReducer(mStack, mVariables.top(), AST::ValueType::BoolArray)},
 
             {Token::Statement,          {Token::Id, Token::Equals, Token::Expression}, getAssignmentASTReducer(mStack, mVariables.top())},
+            {Token::Statement,          {Token::Id, Token::OpenSquareBrace, Token::CloseSquareBrace, Token::Equals, Token::Expression}, getArrayAssignmentASTReducer(mStack, mVariables.top())},
+
             {Token::Statement,          {Token::Id, Token::OpenParenthesis,  Token::Expression,  Token::CloseParenthesis}, getFunctionCallASTReducer(mStack)},
 
             {Token::Statement,          {Token::If, Token::OpenParenthesis,  Token::CompareExpression, Token::CloseParenthesis,
