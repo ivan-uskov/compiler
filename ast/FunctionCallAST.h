@@ -7,6 +7,7 @@ namespace AST
     class FunctionCallAST : public IAST
     {
     public:
+        static const std::string READ;
         static const std::string PRINT;
         static const std::string PRINTLN;
 

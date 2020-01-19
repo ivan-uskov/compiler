@@ -15,15 +15,15 @@ void run(istream & in, ostream & out)
     Tokenizer tokenizer(in, out);
     auto tokens = tokenizer.getTokens();
 
-    ostringstream fakeOut;
-    ASTBuilder astBuilder(fakeOut);
+    ostringstream debug;
+    ASTBuilder astBuilder(debug);
     auto ast = astBuilder.build(tokens);
 
     AST::View av(out);
     ast->accept(av);
     out << endl;
 
-    Translation::Interpreter interpreter(cout);
+    Translation::Interpreter interpreter(in, out);
     ast->accept(interpreter);
     out << endl;
 

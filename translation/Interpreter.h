@@ -12,7 +12,7 @@ namespace Translation
     class Interpreter : public AST::IASTVisitor
     {
     public:
-        explicit Interpreter(std::ostream & out);
+        explicit Interpreter(std::istream & in, std::ostream & out);
 
         void visit(AST::NumberBinaryOperatorAST const& op) override;
         void visit(AST::IntAST const& op) override;
@@ -38,6 +38,7 @@ namespace Translation
         std::stack<Var> mStack;
         std::map<std::string, Var> mScope;
 
+        std::istream & mIn;
         std::ostream & mOut;
     };
 }

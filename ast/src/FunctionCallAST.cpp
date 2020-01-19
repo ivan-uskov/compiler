@@ -2,6 +2,7 @@
 
 #include <utility>
 
+const std::string AST::FunctionCallAST::READ = "read";
 const std::string AST::FunctionCallAST::PRINT = "print";
 const std::string AST::FunctionCallAST::PRINTLN = "println";
 

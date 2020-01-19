@@ -188,8 +188,9 @@ void Interpreter::visit(FunctionCallAST const &op)
     }
 }
 
-Interpreter::Interpreter(std::ostream &out)
-    : mOut(out)
+Interpreter::Interpreter(std::istream & in, std::ostream &out)
+    : mIn(in)
+    , mOut(out)
 {
 }
 
