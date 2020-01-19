@@ -170,7 +170,7 @@ void LLVMCodeGenerator::visit(const AST::FunctionCallAST &op)
     //TODO: add impl
 }
 
-void LLVMCodeGenerator::visit(const AST::BoolBinaryOperatorAST &op)
+void LLVMCodeGenerator::visit(const AST::CompareBinaryOperatorAST &op)
 {
     //TODO: add impl
 }

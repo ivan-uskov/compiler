@@ -22,7 +22,7 @@ namespace Token
             case Token::Expression:       return "Expr";
             case Token::Expression1:      return "Expr1";
             case Token::Expression2:      return "Expr2";
-            case Token::BoolExpression:   return "BoolExpr";
+            case Token::CompareExpression:   return "CompareExpr";
             case Token::VariableDeclaration: return "VarDecl";
 
             case Token::Id:               return "id";

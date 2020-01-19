@@ -21,7 +21,7 @@ namespace Translation
         void visit(const AST::AssignmentAST &op) override;
         void visit(const AST::VariableAccessAST &op) override;
         void visit(const AST::FunctionCallAST &op) override;
-        void visit(const AST::BoolBinaryOperatorAST &op) override;
+        void visit(const AST::CompareBinaryOperatorAST &op) override;
         void visit(const AST::IfAST &op) override;
         void visit(const AST::WhileAST &op) override;
 
@@ -29,11 +29,12 @@ namespace Translation
         struct Var
         {
             AST::ValueType type;
-            std::string strVal;
             double numVal = 0;
+            bool boolVal = false;
+            std::string strVal;
         };
 
-        std::stack<double> mStack;
+        std::stack<Var> mStack;
         std::map<std::string, Var> mScope;
 
         std::ostream & mOut;

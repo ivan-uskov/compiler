@@ -6,6 +6,9 @@
 #include "ast/VariableAccessAST.h"
 #include "ast/FunctionCallAST.h"
 #include "ast/AssignmentAST.h"
+#include "ast/CompareBinaryOperatorAST.h"
+#include "ast/IfAST.h"
+#include "ast/WhileAST.h"
 
 #include <stdexcept>
 
@@ -35,6 +38,24 @@ namespace
 
         throw std::logic_error("invalid binary operator");
     }
+
+    bool calcCompare(double left, double right, CompareBinaryOperatorAST::Type t)
+    {
+        if (t == CompareBinaryOperatorAST::Type::Equals)
+        {
+            return left == right;
+        }
+        else if (t == CompareBinaryOperatorAST::Type::Less)
+        {
+            return left < right;
+        }
+        else if (t == CompareBinaryOperatorAST::Type::More)
+        {
+            return left > right;
+        }
+
+        throw std::logic_error("invalid compare binary operator");
+    }
 }
 
 void Interpreter::visit(BinaryOperatorAST const& op)
@@ -51,12 +72,22 @@ void Interpreter::visit(BinaryOperatorAST const& op)
     mStack.pop();
     auto left = mStack.top();
     mStack.pop();
-    mStack.push(calc(left, right, op.getType()));
+    if (right.type != AST::ValueType::Number)
+    {
+        throw std::logic_error("invalid right operand for evaluating binary ast");
+    }
+    if (left.type != AST::ValueType::Number)
+    {
+        throw std::logic_error("invalid left operand for evaluating binary ast");
+    }
+
+    left.numVal = calc(left.numVal, right.numVal, op.getType());
+    mStack.push(left);
 }
 
 void Interpreter::visit(NumberAST const& op)
 {
-    mStack.push(op.getValue());
+    mStack.push(Var{AST::ValueType::Number, op.getValue()});
 }
 
 void Interpreter::visit(ExpressionPairAST const &op)
@@ -82,12 +113,45 @@ void Interpreter::visit(AssignmentAST const &op)
     auto value = mStack.top();
     mStack.pop();
 
-    mScope[op.getId()].numVal = value; //TODO: add string support
+    if (mScope[op.getId()].type != value.type)
+    {
+        throw std::logic_error("assignment type missmatch");
+    }
+
+    switch (value.type)
+    {
+        case ValueType::Number:
+            mScope[op.getId()].numVal = value.numVal;
+            break;
+        case ValueType::String:
+            mScope[op.getId()].strVal = value.strVal;
+            break;
+        case ValueType::Bool:
+            mScope[op.getId()].boolVal = value.boolVal;
+            break;
+        default:
+            throw std::logic_error("unassignable type error");
+    }
 }
 
 void Interpreter::visit(VariableAccessAST const &op)
 {
-    mStack.push(mScope[op.getId()].numVal); //TODO: add string support
+    Var var{op.getResultType()};
+    switch (var.type)
+    {
+        case ValueType::Number:
+            var.numVal = mScope[op.getId()].numVal;
+            break;
+        case ValueType::String:
+            var.strVal = mScope[op.getId()].strVal;
+            break;
+        case ValueType::Bool:
+            var.boolVal = mScope[op.getId()].boolVal;
+            break;
+        default:
+            throw std::logic_error("invalid var type error");
+    }
+    mStack.push(var);
 }
 
 void Interpreter::visit(FunctionCallAST const &op)
@@ -102,7 +166,20 @@ void Interpreter::visit(FunctionCallAST const &op)
     auto arg = mStack.top();
     mStack.pop();
 
-    mOut << arg;
+    switch (arg.type)
+    {
+        case ValueType::Number:
+            mOut << arg.numVal;
+            break;
+        case ValueType::String:
+            mOut << arg.strVal;
+            break;
+        case ValueType::Bool:
+            mOut << arg.boolVal;
+            break;
+        default:
+            throw std::logic_error("invalid var type error");
+    }
 }
 
 Interpreter::Interpreter(std::ostream &out)
@@ -110,17 +187,83 @@ Interpreter::Interpreter(std::ostream &out)
 {
 }
 
-void Interpreter::visit(BoolBinaryOperatorAST const &op)
+void Interpreter::visit(CompareBinaryOperatorAST const &op)
 {
-    //TODO: add bool values to stack
+    op.acceptLeft(*this);
+    op.acceptRight(*this);
+
+    if (mStack.size() < 2)
+    {
+        throw std::logic_error("invalid stack size for evaluating binary ast");
+    }
+
+    auto right = mStack.top();
+    mStack.pop();
+    auto left = mStack.top();
+    mStack.pop();
+    if (right.type != AST::ValueType::Number)
+    {
+        throw std::logic_error("invalid right operand for evaluating binary ast");
+    }
+    if (left.type != AST::ValueType::Number)
+    {
+        throw std::logic_error("invalid left operand for evaluating binary ast");
+    }
+
+    Var var{op.getResultType()};
+    var.boolVal = calcCompare(left.numVal, right.numVal, op.getType());
+    mStack.push(var);
 }
 
 void Interpreter::visit(IfAST const &op)
 {
-    //TODO: implement
+    op.acceptCond(*this);
+
+    if (mStack.empty())
+    {
+        throw std::logic_error("invalid stack size for evaluating binary ast");
+    }
+
+    auto cond = mStack.top();
+    mStack.pop();
+
+    if (cond.type != AST::ValueType::Bool)
+    {
+        throw std::logic_error("invalid cond type for evaluating if ast");
+    }
+
+    if (cond.boolVal)
+    {
+        op.acceptStmt(*this);
+    }
 }
 
 void Interpreter::visit(WhileAST const &op)
 {
-    //TODO: impl
+    while (true)
+    {
+        op.acceptCond(*this);
+
+        if (mStack.empty())
+        {
+            throw std::logic_error("invalid stack size for evaluating binary ast");
+        }
+
+        auto cond = mStack.top();
+        mStack.pop();
+
+        if (cond.type != AST::ValueType::Bool)
+        {
+            throw std::logic_error("invalid cond type for evaluating if ast");
+        }
+
+        if (cond.boolVal)
+        {
+            op.acceptStmt(*this);
+        }
+        else
+        {
+            break;
+        }
+    }
 }

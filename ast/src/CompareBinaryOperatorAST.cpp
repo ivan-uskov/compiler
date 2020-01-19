@@ -1,10 +1,10 @@
-#include "../BoolBinaryOperatorAST.h"
+#include "ast/CompareBinaryOperatorAST.h"
 
 #include <stdexcept>
 
 using namespace AST;
 
-BoolBinaryOperatorAST::BoolBinaryOperatorAST(std::unique_ptr<IAST> && left, std::unique_ptr<IAST> && right, Type t)
+CompareBinaryOperatorAST::CompareBinaryOperatorAST(std::unique_ptr<IAST> && left, std::unique_ptr<IAST> && right, Type t)
         : mLeft(std::move(left))
         , mRight(std::move(right))
         , mType(t)
@@ -22,32 +22,32 @@ BoolBinaryOperatorAST::BoolBinaryOperatorAST(std::unique_ptr<IAST> && left, std:
     mValueType = ValueType::Bool;
 }
 
-void BoolBinaryOperatorAST::accept(IASTVisitor & v) const
+void CompareBinaryOperatorAST::accept(IASTVisitor & v) const
 {
     v.visit(*this);
 }
 
-void BoolBinaryOperatorAST::acceptLeft(IASTVisitor & v) const
+void CompareBinaryOperatorAST::acceptLeft(IASTVisitor & v) const
 {
     mLeft->accept(v);
 }
 
-void BoolBinaryOperatorAST::acceptRight(IASTVisitor & v) const
+void CompareBinaryOperatorAST::acceptRight(IASTVisitor & v) const
 {
     mRight->accept(v);
 }
 
-BoolBinaryOperatorAST::Type BoolBinaryOperatorAST::getType() const
+CompareBinaryOperatorAST::Type CompareBinaryOperatorAST::getType() const
 {
     return mType;
 }
 
-ValueType BoolBinaryOperatorAST::getResultType() const
+ValueType CompareBinaryOperatorAST::getResultType() const
 {
     return mValueType;
 }
 
-std::string BoolBinaryOperatorAST::typeToString(BoolBinaryOperatorAST::Type t)
+std::string CompareBinaryOperatorAST::typeToString(CompareBinaryOperatorAST::Type t)
 {
     switch (t)
     {
@@ -64,9 +64,9 @@ std::string BoolBinaryOperatorAST::typeToString(BoolBinaryOperatorAST::Type t)
 
 namespace AST
 {
-    std::ostream & operator << (std::ostream & out, BoolBinaryOperatorAST::Type t)
+    std::ostream & operator << (std::ostream & out, CompareBinaryOperatorAST::Type t)
     {
-        out << BoolBinaryOperatorAST::typeToString(t);
+        out << CompareBinaryOperatorAST::typeToString(t);
         return out;
     }
 }

@@ -17,7 +17,7 @@ namespace AST
         void visit(AssignmentAST const &op) override;
         void visit(VariableAccessAST const &op) override;
         void visit(FunctionCallAST const &op) override;
-        void visit(BoolBinaryOperatorAST const &op) override;
+        void visit(CompareBinaryOperatorAST const &op) override;
         void visit(IfAST const &op) override;
         void visit(WhileAST const &op) override;
 

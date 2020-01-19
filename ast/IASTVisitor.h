@@ -9,7 +9,7 @@ namespace AST
     class AssignmentAST;
     class VariableAccessAST;
     class FunctionCallAST;
-    class BoolBinaryOperatorAST;
+    class CompareBinaryOperatorAST;
     class IfAST;
     class WhileAST;
 
@@ -24,7 +24,7 @@ namespace AST
         virtual void visit(AssignmentAST const& op) = 0;
         virtual void visit(VariableAccessAST const& op) = 0;
         virtual void visit(FunctionCallAST const& op) = 0;
-        virtual void visit(BoolBinaryOperatorAST const& op) = 0;
+        virtual void visit(CompareBinaryOperatorAST const& op) = 0;
         virtual void visit(IfAST const& op) = 0;
         virtual void visit(WhileAST const& op) = 0;
     };

@@ -6,7 +6,7 @@
 #include "../AssignmentAST.h"
 #include "../VariableAccessAST.h"
 #include "../FunctionCallAST.h"
-#include "../BoolBinaryOperatorAST.h"
+#include "ast/CompareBinaryOperatorAST.h"
 #include "../IfAST.h"
 #include "../WhileAST.h"
 
@@ -60,7 +60,7 @@ void View::visit(FunctionCallAST const &op)
     mOut << ")";
 }
 
-void View::visit(BoolBinaryOperatorAST const &op)
+void View::visit(CompareBinaryOperatorAST const &op)
 {
     mOut << "(";
     op.acceptLeft(*this);

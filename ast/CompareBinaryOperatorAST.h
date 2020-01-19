@@ -4,7 +4,7 @@
 
 namespace AST
 {
-    class BoolBinaryOperatorAST : public IAST
+    class CompareBinaryOperatorAST : public IAST
     {
     public:
         enum class Type
@@ -13,7 +13,7 @@ namespace AST
             More,
             Equals
         };
-        explicit BoolBinaryOperatorAST(std::unique_ptr<IAST> && left, std::unique_ptr<IAST> && right, Type t);
+        explicit CompareBinaryOperatorAST(std::unique_ptr<IAST> && left, std::unique_ptr<IAST> && right, Type t);
         void accept(IASTVisitor & v) const override;
         void acceptLeft(IASTVisitor & v) const;
         void acceptRight(IASTVisitor & v) const;
@@ -29,5 +29,5 @@ namespace AST
         ValueType mValueType;
     };
 
-    std::ostream & operator << (std::ostream & out, AST::BoolBinaryOperatorAST::Type t);
+    std::ostream & operator << (std::ostream & out, AST::CompareBinaryOperatorAST::Type t);
 }

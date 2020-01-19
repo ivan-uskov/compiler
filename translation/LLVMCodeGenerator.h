@@ -28,7 +28,7 @@ namespace Translation
         void visit(const AST::AssignmentAST &op) override;
         void visit(const AST::VariableAccessAST &op) override;
         void visit(const AST::FunctionCallAST &op) override;
-        void visit(const AST::BoolBinaryOperatorAST &op) override;
+        void visit(const AST::CompareBinaryOperatorAST &op) override;
         void visit(const AST::IfAST &op) override;
         void visit(const AST::WhileAST &op) override;
 
