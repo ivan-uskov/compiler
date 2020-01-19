@@ -32,6 +32,7 @@ namespace Translation
         void visit(const AST::IfAST &op) override;
         void visit(const AST::WhileAST &op) override;
         void visit(const AST::StringAST &op) override;
+        void visit(const AST::DoubleAST &op) override;
 
     private:
         std::vector<llvm::Value *> getValues() const;

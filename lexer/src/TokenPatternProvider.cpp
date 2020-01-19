@@ -40,9 +40,9 @@ namespace Lexer
 
         m_regexPatterns = {
                 {Token::Id,    regex("^([a-zA-Z]+[a-zA-Z0-9]*)(.*)$")},
-                {Token::StringLiteral, regex("^(\'[^\']*\')(.*)$")},
-                {Token::IntLiteral, regex("^([0-9]+)(.*)$")},
+                {Token::StringLiteral, regex(R"(^('[^']*')(.*)$)")},
                 {Token::DoubleLiteral, regex("^([0-9]+\.[0-9]+)(.*)$")},
+                {Token::IntLiteral, regex("^([0-9]+)(.*)$")},
         };
     }
 

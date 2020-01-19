@@ -13,6 +13,7 @@ namespace AST
     class IfAST;
     class WhileAST;
     class StringAST;
+    class DoubleAST;
 
     class IASTVisitor
     {
@@ -29,5 +30,6 @@ namespace AST
         virtual void visit(IfAST const& op) = 0;
         virtual void visit(WhileAST const& op) = 0;
         virtual void visit(StringAST const& op) = 0;
+        virtual void visit(DoubleAST const& op) = 0;
     };
 }

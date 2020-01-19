@@ -1,15 +1,16 @@
-#include "ast/View.h"
-#include "ast/NumberBinaryOperatorAST.h"
-#include "ast/IntAST.h"
+#include "../View.h"
+#include "../NumberBinaryOperatorAST.h"
+#include "../IntAST.h"
 #include "../ExpressionPairAST.h"
 #include "../VariableDeclarationAST.h"
 #include "../AssignmentAST.h"
 #include "../VariableAccessAST.h"
 #include "../FunctionCallAST.h"
-#include "ast/CompareBinaryOperatorAST.h"
+#include "../CompareBinaryOperatorAST.h"
 #include "../IfAST.h"
 #include "../WhileAST.h"
 #include "../StringAST.h"
+#include "../DoubleAST.h"
 
 using namespace AST;
 
@@ -91,6 +92,11 @@ void View::visit(WhileAST const &op)
 }
 
 void View::visit(StringAST const &op)
+{
+    mOut << op.getValue();
+}
+
+void View::visit(DoubleAST const &op)
 {
     mOut << op.getValue();
 }

@@ -12,6 +12,7 @@
 #include "ast/IfAST.h"
 #include "ast/WhileAST.h"
 #include "ast/StringAST.h"
+#include "ast/DoubleAST.h"
 
 using namespace SLR;
 using namespace AST;
@@ -64,6 +65,19 @@ namespace
             }
 
             stack.emplace(new IntAST(tokens[0]));
+        };
+    }
+
+    template<typename T>
+    Rules::Action getDoubleASTReducer(T & stack)
+    {
+        return [&stack](auto const& tokens) {
+            if (tokens.size() != 1)
+            {
+                throw std::logic_error("invalid tokens for reduce double");
+            }
+
+            stack.emplace(new DoubleAST(tokens[0]));
         };
     }
 
@@ -252,15 +266,14 @@ namespace
 Rules::Table ASTBuilder::getRules()
 {
     return {
-            {Token::Root,               {Token::StatementList},                                                                                 getRootReducer(
-                    mStack)},
+            {Token::Root,               {Token::StatementList}, getRootReducer(mStack)},
 
             {Token::StatementListWhile, {Token::StatementList}},
             {Token::StatementListIf,    {Token::StatementList}},
-            {Token::StatementList,      {Token::StatementList,     Token::Semicolon,        Token::Statement},                                  getExpressionListReducer(
-                    mStack)},
+            {Token::StatementList,      {Token::StatementList, Token::Semicolon, Token::Statement}, getExpressionListReducer(mStack)},
             {Token::StatementList,      {Token::Statement}},
 
+            {Token::Statement,          {Token::Double, Token::Id}, getVariableDeclarationASTReducer(mStack, mVariables.top(), AST::ValueType::Double)},
             {Token::Statement,          {Token::Int, Token::Id}, getVariableDeclarationASTReducer(mStack, mVariables.top(), AST::ValueType::Int)},
             {Token::Statement,          {Token::String, Token::Id}, getVariableDeclarationASTReducer(mStack, mVariables.top(), AST::ValueType::String)},
             {Token::Statement,          {Token::Bool, Token::Id}, getVariableDeclarationASTReducer(mStack, mVariables.top(), AST::ValueType::Bool)},
@@ -293,6 +306,7 @@ Rules::Table ASTBuilder::getRules()
             {Token::NumberExpression2,  {Token::OpenParenthesis, Token::NumberExpression, Token::CloseParenthesis}},
             {Token::NumberExpression2,  {Token::Minus, Token::NumberExpression2}, getUnaryMinusASTReducer(mStack)},
             {Token::NumberExpression2,  {Token::IntLiteral}, getIntASTReducer(mStack)},
+            {Token::NumberExpression2,  {Token::DoubleLiteral}, getDoubleASTReducer(mStack)},
             {Token::NumberExpression2,  {Token::Id}, getVariableAccessASTReducer(mStack, mVariables.top())}
     };
 }

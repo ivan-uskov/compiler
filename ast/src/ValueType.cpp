@@ -9,6 +9,16 @@ namespace AST
         return out;
     }
 
+    bool isNumberType(ValueType const& t)
+    {
+        return t == ValueType::Int || t == ValueType::Double;
+    }
+
+    bool isArrayType(ValueType const& t)
+    {
+        return t == ValueType::IntArray || t == ValueType::DoubleArray || t == ValueType::BoolArray || t == ValueType::StringArray;
+    }
+
     std::string valueTypeToString(ValueType const& t)
     {
         switch (t)
@@ -23,6 +33,16 @@ namespace AST
                 return "string";
             case ValueType::Bool:
                 return "bool";
+            case ValueType::Double:
+                return "double";
+            case ValueType::IntArray:
+                return "intArray";
+            case ValueType::BoolArray:
+                return "boolArray";
+            case ValueType::StringArray:
+                return "stringArray";
+            case ValueType::DoubleArray:
+                return "doubleArray";
             default:
                 return "";
         }

@@ -9,14 +9,14 @@ CompareBinaryOperatorAST::CompareBinaryOperatorAST(std::unique_ptr<IAST> && left
         , mRight(std::move(right))
         , mType(t)
 {
-    if (mLeft->getResultType() != ValueType::Int)
+    if (!isNumberType(mLeft->getResultType()))
     {
-        throw std::logic_error("For operation " + typeToString(t) + " invalid left type" + valueTypeToString(mLeft->getResultType()));
+        throw std::logic_error("For operation " + typeToString(t) + " invalid left type " + valueTypeToString(mLeft->getResultType()));
     }
 
-    if (mRight->getResultType() != ValueType::Int)
+    if (!isNumberType(mRight->getResultType()))
     {
-        throw std::logic_error("For operation " + typeToString(t) + " invalid right type" + valueTypeToString(mRight->getResultType()));
+        throw std::logic_error("For operation " + typeToString(t) + " invalid right type " + valueTypeToString(mRight->getResultType()));
     }
 
     mValueType = ValueType::Bool;

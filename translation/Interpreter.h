@@ -26,13 +26,16 @@ namespace Translation
         void visit(const AST::WhileAST &op) override;
         void visit(const AST::StringAST &op) override;
 
+        void visit(const AST::DoubleAST &op) override;
+
     private:
         struct Var
         {
             AST::ValueType type;
-            double numVal = 0;
+            int intVal = 0;
             bool boolVal = false;
             std::string strVal;
+            double doubleVal = 0.0;
         };
 
         std::stack<Var> mStack;

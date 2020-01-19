@@ -21,6 +21,7 @@ namespace AST
         void visit(IfAST const &op) override;
         void visit(WhileAST const &op) override;
         void visit(StringAST const &op) override;
+        void visit(DoubleAST const &op) override;
 
     private:
         std::ostream & mOut;
