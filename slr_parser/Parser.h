@@ -130,7 +130,8 @@ namespace SLR
                 states.pop();
             }
 
-            input.push_front(Token::Token{rule.first, "" , 0, 0});
+            auto const& back = ruleTokens.back();
+            input.push_front(Token::Token{rule.first, back.value, back.line, back.column});
             if (rule.action)
             {
                 rule.action(ruleTokens);

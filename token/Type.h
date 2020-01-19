@@ -21,6 +21,7 @@ namespace Token
     static const Type CompareExpression = NonTerminal | 0x204u;
     static const Type StringExpression = NonTerminal | 0x205u;
     static const Type VariableDeclaration = NonTerminal | 0x300u;
+    static const Type IdAndOpenSquareBrace = NonTerminal | 0x400u;
 
     static const Type Id = Terminal | 0x100u;                         // ([a-z]+[a-z0-9]*)
 

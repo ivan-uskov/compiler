@@ -176,15 +176,15 @@ namespace
     }
 
     template<typename T, typename S>
-    Rules::Action getArrayAssignmentASTReducer(T & stack, S & scope)
+    Rules::Action getArrayAssignmentASTReducer(T & stack, S & scope, bool hasIndex = false)
     {
-        return [&stack, &scope](auto const& tokens) {
-            if (tokens.size() != 5 || stack.empty())
+        return [&stack, &scope, hasIndex](auto const& tokens) {
+            if (tokens.size() != (hasIndex ? 5 : 4) || stack.empty())
             {
                 throw std::logic_error("invalid state for reduce array assignment");
             }
 
-            auto const& id = tokens[4];
+            auto id = tokens[hasIndex ? 4 : 3];
             if (scope.find(id.value) == scope.end())
             {
                 throw std::logic_error("array assignment to a nonexistent variable: " + Token::tokenDescription(id));
@@ -204,7 +204,21 @@ namespace
                 );
             }
 
-            stack.emplace(new ArrayAssignmentAST(id, std::move(value)));
+            if (hasIndex)
+            {
+                auto index = std::move(stack.top());
+                stack.pop();
+                if (index->getResultType() != ValueType::Int)
+                {
+                    throw std::logic_error("invalid type for index: " + valueTypeToString(index->getResultType()));
+                }
+
+                stack.emplace(new ArrayAssignmentAST(id, std::move(index), std::move(value)));
+            }
+            else
+            {
+                stack.emplace(new ArrayAssignmentAST(id, std::move(value)));
+            }
         };
     }
 
@@ -317,14 +331,18 @@ Rules::Table ASTBuilder::getRules()
             {Token::Statement,          {Token::String, Token::OpenSquareBrace, Token::CloseSquareBrace, Token::Id}, getVariableDeclarationASTReducer(mStack, mVariables.top(), AST::ValueType::StringArray)},
             {Token::Statement,          {Token::Bool, Token::OpenSquareBrace, Token::CloseSquareBrace, Token::Id}, getVariableDeclarationASTReducer(mStack, mVariables.top(), AST::ValueType::BoolArray)},
 
-            {Token::Statement,          {Token::Id, Token::Equals, Token::Expression}, getAssignmentASTReducer(mStack, mVariables.top())},
-            {Token::Statement,          {Token::Id, Token::OpenSquareBrace, Token::CloseSquareBrace, Token::Equals, Token::Expression}, getArrayAssignmentASTReducer(mStack, mVariables.top())},
+            {Token::Statement,            {Token::Id, Token::Equals, Token::Expression}, getAssignmentASTReducer(mStack, mVariables.top())},
 
-            {Token::Statement,          {Token::Id, Token::OpenParenthesis,  Token::Expression,  Token::CloseParenthesis}, getFunctionCallASTReducer(mStack)},
+            {Token::Statement,            {Token::IdAndOpenSquareBrace, Token::NumberExpression, Token::CloseSquareBrace, Token::Equals, Token::Expression}, getArrayAssignmentASTReducer(mStack, mVariables.top(), true)},
+            {Token::Statement,            {Token::IdAndOpenSquareBrace, Token::CloseSquareBrace, Token::Equals, Token::Expression}, getArrayAssignmentASTReducer(mStack, mVariables.top())},
+
+            {Token::IdAndOpenSquareBrace, {Token::Id, Token::OpenSquareBrace}},
+
+            {Token::Statement,            {Token::Id, Token::OpenParenthesis,  Token::Expression, Token::CloseParenthesis}, getFunctionCallASTReducer(mStack)},
 
             {Token::Statement,          {Token::If, Token::OpenParenthesis,  Token::CompareExpression, Token::CloseParenthesis,
                                                 Token::OpenBrace, Token::StatementListIf,    Token::CloseBrace}, getIfASTReducer(mStack)},
-            {Token::Statement,          {Token::While,             Token::OpenParenthesis,  Token::CompareExpression, Token::CloseParenthesis,
+            {Token::Statement,          {Token::While, Token::OpenParenthesis,  Token::CompareExpression, Token::CloseParenthesis,
                                                 Token::OpenBrace, Token::StatementListWhile, Token::CloseBrace}, getWhileASTReducer(mStack)},
 
             {Token::Expression, {Token::NumberExpression}},
