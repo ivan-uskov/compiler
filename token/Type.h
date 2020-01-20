@@ -21,7 +21,11 @@ namespace Token
     static const Type NumberExpression3 = NonTerminal | 0x204u;
     static const Type CompareExpression = NonTerminal | 0x205u;
     static const Type StringExpression = NonTerminal | 0x206u;
-    static const Type BoolExpression = NonTerminal | 0x207u;
+    static const Type StringExpression1 = NonTerminal | 0x207u;
+    static const Type StringExpression2 = NonTerminal | 0x208u;
+    static const Type BoolExpression = NonTerminal | 0x209u;
+    static const Type BoolExpression1 = NonTerminal | 0x20Au;
+    static const Type BoolExpression2 = NonTerminal | 0x20Bu;
     static const Type VariableDeclaration = NonTerminal | 0x300u;
     static const Type IdAndOpenSquareBrace = NonTerminal | 0x400u;
 

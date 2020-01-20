@@ -13,22 +13,26 @@ namespace Token
     {
         switch (type)
         {
-            case Token::Root:             return "Root";
+            case Token::Root:                 return "Root";
 
-            case Token::Statement:        return "Stmt";
-            case Token::StatementList:    return "StmtList";
-            case Token::StatementListIf:  return "StmtListIf";
-            case Token::StatementListWhile: return "StmtListWhile";
-            case Token::Expression:       return "Expr";
-            case Token::NumberExpression:       return "NumExpr";
-            case Token::NumberExpression1:      return "NumExpr1";
-            case Token::NumberExpression2:      return "NumExpr2";
-            case Token::NumberExpression3:      return "NumExpr3";
-            case Token::CompareExpression:   return "CompareExpr";
-            case Token::StringExpression:    return "StrExpr";
-            case Token::BoolExpression:    return "BoolExpr";
-            case Token::VariableDeclaration: return "VarDecl";
-            case Token::IdAndOpenSquareBrace:    return "id[";
+            case Token::Statement:            return "Stmt";
+            case Token::StatementList:        return "StmtList";
+            case Token::StatementListIf:      return "StmtListIf";
+            case Token::StatementListWhile:   return "StmtListWhile";
+            case Token::Expression:           return "Expr";
+            case Token::NumberExpression:     return "NumExpr";
+            case Token::NumberExpression1:    return "NumExpr1";
+            case Token::NumberExpression2:    return "NumExpr2";
+            case Token::NumberExpression3:    return "NumExpr3";
+            case Token::CompareExpression:    return "CompareExpr";
+            case Token::StringExpression:     return "StrExpr";
+            case Token::StringExpression1:    return "StrExpr1";
+            case Token::StringExpression2:    return "StrExpr2";
+            case Token::BoolExpression:       return "BoolExpr";
+            case Token::BoolExpression1:      return "BoolExpr1";
+            case Token::BoolExpression2:      return "BoolExpr2";
+            case Token::VariableDeclaration:  return "VarDecl";
+            case Token::IdAndOpenSquareBrace: return "id[";
 
             case Token::Id:               return "id";
             case Token::StringLiteral:    return "stringLiteral";
@@ -45,11 +49,11 @@ namespace Token
 
             case Token::And:              return "&&";
             case Token::Or:               return "||";
-            case Token::DoubleEquals:           return "==";
+            case Token::DoubleEquals:     return "==";
 
             case Token::Comma:            return ",";
             case Token::Semicolon:        return ";";
-            case Token::Equals:       return "=";
+            case Token::Equals:           return "=";
             case Token::Less:             return "<";
             case Token::More:             return ">";
             case Token::OpenBrace:        return "{";
@@ -66,7 +70,7 @@ namespace Token
             case Token::CloseSquareBrace: return "]";
 
             case Token::End:              return "end";
-            default:                            return "Unexpected token type";
+            default:                      return "Unexpected token type";
         }
     }
 }

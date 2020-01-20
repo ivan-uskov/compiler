@@ -386,13 +386,19 @@ Rules::Table ASTBuilder::getRules()
             {Token::Expression, {Token::StringExpression}},
             {Token::Expression, {Token::BoolExpression}},
 
-            {Token::StringExpression,   {Token::StringLiteral}, getStringASTReducer(mStack)},
-            //{Token::StringExpression,  {Token::Id}, getVariableAccessASTReducer(mStack, mVariables.top(), ValueType::String)},
-            //{Token::StringExpression,  {Token::Id, Token::OpenSquareBrace, Token::NumberExpression, Token::CloseSquareBrace}, getArrayAccessASTReducer(mStack, mVariables.top(), ValueType::String)},
+            {Token::StringExpression,  {Token::StringLiteral}, getStringASTReducer(mStack)},
+            {Token::StringExpression,  {Token::StringExpression1}},
+            {Token::StringExpression1, {Token::Id}, getVariableAccessASTReducer(mStack, mVariables.top(), ValueType::String)},
+            {Token::StringExpression1, {Token::StringExpression2}},
+            {Token::StringExpression2, {Token::Id, Token::OpenSquareBrace, Token::NumberExpression, Token::CloseSquareBrace}, getArrayAccessASTReducer(mStack, mVariables.top(), ValueType::String)},
 
             {Token::BoolExpression, {Token::CompareExpression}},
-            {Token::BoolExpression, {Token::Id}, getVariableAccessASTReducer(mStack, mVariables.top(), ValueType::Bool)},
-            //{Token::BoolExpression, {Token::Id, Token::OpenSquareBrace, Token::NumberExpression, Token::CloseSquareBrace}, getArrayAccessASTReducer(mStack, mVariables.top(), ValueType::Bool)},
+            {Token::BoolExpression, {Token::BoolExpression1}},
+
+            {Token::BoolExpression1, {Token::Id}, getVariableAccessASTReducer(mStack, mVariables.top(), ValueType::Bool)},
+            {Token::BoolExpression1, {Token::BoolExpression2}},
+
+            {Token::BoolExpression2, {Token::Id, Token::OpenSquareBrace, Token::NumberExpression, Token::CloseSquareBrace}, getArrayAccessASTReducer(mStack, mVariables.top(), ValueType::Bool)},
 
             {Token::CompareExpression,  {Token::NumberExpression,  Token::Less, Token::NumberExpression}, getCompareBinaryOperatorASTReducer(mStack, CompareBinaryOperatorAST::Type::Less)},
             {Token::CompareExpression,  {Token::NumberExpression,  Token::More, Token::NumberExpression}, getCompareBinaryOperatorASTReducer(mStack, CompareBinaryOperatorAST::Type::More)},
