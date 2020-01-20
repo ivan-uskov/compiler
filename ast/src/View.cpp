@@ -98,7 +98,7 @@ void View::visit(WhileAST const &op)
 
 void View::visit(StringAST const &op)
 {
-    mOut << op.getValue();
+    mOut << "'" << op.getValue() << "'";
 }
 
 void View::visit(DoubleAST const &op)

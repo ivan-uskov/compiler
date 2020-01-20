@@ -143,9 +143,16 @@ namespace Lexer
 
     void Tokenizer::addToken(Token::Type const & type, string const & value)
     {
+        auto preparedValue = value;
+        if (type == Token::StringLiteral && preparedValue.size() > 2)
+        {
+            preparedValue.erase(preparedValue.begin());
+            preparedValue.erase(preparedValue.size() - 1);
+        }
+
         m_tokens.push_back({
              type,
-             value,
+             preparedValue,
              m_lineCount + 1,
              m_charCount + 1
         });
