@@ -58,10 +58,12 @@ void View::visit(VariableAccessAST const &op)
     mOut << op.getId();
 }
 
-void View::visit(FunctionCallAST const &op)
-{
-    mOut << "print(";
-    op.acceptArgument(*this);
+void View::visit(FunctionCallAST const &op) {
+    mOut << op.getName() << "(";
+    if (op.getResultType() == ValueType::Void)
+    {
+        op.acceptArgument(*this);
+    }
     mOut << ")";
 }
 

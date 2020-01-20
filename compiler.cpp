@@ -1,4 +1,5 @@
 #include <iostream>
+#include <fstream>
 
 #include "lexer/Tokenizer.h"
 #include "slr_parser/Parser.h"
@@ -10,9 +11,9 @@
 using namespace std;
 using namespace Lexer;
 
-void run(istream & in, ostream & out)
+void run(istream & codeIn, istream & programIn, ostream & out)
 {
-    Tokenizer tokenizer(in, out);
+    Tokenizer tokenizer(codeIn, out);
     auto tokens = tokenizer.getTokens();
 
     ostringstream debug;
@@ -23,7 +24,7 @@ void run(istream & in, ostream & out)
     ast->accept(av);
     out << endl << endl;
 
-    Translation::Interpreter interpreter(in, out);
+    Translation::Interpreter interpreter(programIn, out);
     ast->accept(interpreter);
     out << endl;
 
@@ -31,11 +32,17 @@ void run(istream & in, ostream & out)
     codeGen.generate(*ast);
 }
 
-int main()
+int main(int argc, char *argv[])
 {
     try
     {
-        run(cin, cout);
+        if (argc != 2)
+        {
+            throw logic_error("code input param expected");
+        }
+
+        ifstream codeIn(argv[1], std::ifstream::in);
+        run(codeIn, cin, cout);
     }
     catch (exception const & e)
     {

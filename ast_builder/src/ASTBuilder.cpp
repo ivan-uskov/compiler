@@ -281,18 +281,31 @@ namespace
     }
 
     template<typename T>
-    Rules::Action getFunctionCallASTReducer(T & stack)
+    Rules::Action getFunctionCallASTReducer(T & stack, bool isPrint = true)
     {
-        return [&stack](auto const& tokens) {
-            if (tokens.size() != 4 || stack.empty() || !FunctionCallAST::isSupportedFunctionName(tokens[3].value))
+        return [&stack, isPrint](auto const& tokens) {
+            std::string const& name = tokens[isPrint ? 3 : 2].value;
+            if (tokens.size() != (isPrint ? 4 : 3) || !FunctionCallAST::isSupportedFunctionName(name))
             {
-                throw std::logic_error("invalid state for reduce function call");
+                throw std::logic_error("invalid state for reduce function call " + name + ", tokens size: " + std::to_string(tokens.size()));
             }
 
-            auto arg = std::move(stack.top());
-            stack.pop();
+            if (isPrint)
+            {
+                if (stack.empty())
+                {
+                    throw std::logic_error("invalid state for reduce print function call");
+                }
 
-            stack.emplace(new FunctionCallAST(tokens[3].value, std::move(arg)));
+                auto arg = std::move(stack.top());
+                stack.pop();
+
+                stack.emplace(new FunctionCallAST(name, std::move(arg)));
+            }
+            else
+            {
+                stack.emplace(new FunctionCallAST(name));
+            }
         };
     }
 
@@ -413,6 +426,7 @@ Rules::Table ASTBuilder::getRules()
             {Token::NumberExpression2,  {Token::Id}, getVariableAccessASTReducer(mStack, mVariables.top())},
             {Token::NumberExpression2,  {Token::NumberExpression3}},
 
+            {Token::NumberExpression3,  {Token::Id, Token::OpenParenthesis, Token::CloseParenthesis}, getFunctionCallASTReducer(mStack, false)},
             {Token::NumberExpression3,  {Token::Id, Token::OpenSquareBrace, Token::NumberExpression, Token::CloseSquareBrace}, getArrayAccessASTReducer(mStack, mVariables.top())}
     };
 }

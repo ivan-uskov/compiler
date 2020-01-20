@@ -18,7 +18,6 @@
 #include <stdexcept>
 #include <sstream>
 #include <algorithm>
-#include <functional>
 
 using namespace Translation;
 using namespace AST;
@@ -241,49 +240,21 @@ void Interpreter::visit(VariableAccessAST const &op)
 
 void Interpreter::visit(FunctionCallAST const &op)
 {
-    op.acceptArgument(*this);
-
-    if (mStack.empty())
+    if (op.getResultType() == ValueType::Void)
     {
-        throw std::logic_error("invalid stack size for evaluating assignment");
+        op.acceptArgument(*this);
+        if (mStack.empty())
+        {
+            throw std::logic_error("invalid stack size for evaluating assignment");
+        }
+        auto arg = mStack.top();
+        mStack.pop();
+
+        printVar(arg, op.getName() == FunctionCallAST::PRINTLN);
     }
-
-    auto arg = mStack.top();
-    mStack.pop();
-
-    switch (arg.type)
+    else
     {
-        case ValueType::Int:
-            mOut << arg.intVal;
-            break;
-        case ValueType::String:
-            mOut << arg.strVal;
-            break;
-        case ValueType::Bool:
-            mOut << (arg.boolVal ? "true" : "false");
-            break;
-        case ValueType::Double:
-            mOut << arg.doubleVal;
-            break;
-        case ValueType::IntArray:
-            mOut << arrayToString(arg.intArray);
-            break;
-        case ValueType::BoolArray:
-            mOut << arrayToString(arg.boolArray);
-            break;
-        case ValueType::StringArray:
-            mOut << arrayToString(arg.stringArray);
-            break;
-        case ValueType::DoubleArray:
-            mOut << arrayToString(arg.doubleArray);
-            break;
-        default:
-            throw std::logic_error("invalid var type error");
-    }
-
-    if (op.getName() == FunctionCallAST::PRINTLN)
-    {
-        mOut << std::endl;
+        mStack.push(readVar(op.getResultType()));
     }
 }
 
@@ -513,4 +484,66 @@ void Interpreter::visit(ArrayAccessAST const &op)
 void Interpreter::visit(BoolAST const &op)
 {
     mStack.push(Var{AST::ValueType::Bool, 0, op.getValue()});
+}
+
+void Interpreter::printVar(const Interpreter::Var &v, bool addNewLine)
+{
+    switch (v.type)
+    {
+        case ValueType::Int:
+            mOut << v.intVal;
+            break;
+        case ValueType::String:
+            mOut << v.strVal;
+            break;
+        case ValueType::Bool:
+            mOut << (v.boolVal ? "true" : "false");
+            break;
+        case ValueType::Double:
+            mOut << v.doubleVal;
+            break;
+        case ValueType::IntArray:
+            mOut << arrayToString(v.intArray);
+            break;
+        case ValueType::BoolArray:
+            mOut << arrayToString(v.boolArray);
+            break;
+        case ValueType::StringArray:
+            mOut << arrayToString(v.stringArray);
+            break;
+        case ValueType::DoubleArray:
+            mOut << arrayToString(v.doubleArray);
+            break;
+        default:
+            throw std::logic_error("invalid var type error");
+    }
+
+    if (addNewLine)
+    {
+        mOut << std::endl;
+    }
+}
+
+Interpreter::Var Interpreter::readVar(AST::ValueType const &t)
+{
+    Var var{t};
+    switch (t)
+    {
+        case ValueType::Int:
+            mIn >> var.intVal;
+            break;
+        case ValueType::Bool:
+            mIn >> var.boolVal;
+            break;
+        case ValueType::String:
+            mIn >> var.strVal;
+            break;
+        case ValueType::Double:
+            mIn >> var.doubleVal;
+            break;
+        default:
+            throw std::logic_error("unexpected value type: " + valueTypeToString(t) + " when executing read");
+    }
+
+    return var;
 }

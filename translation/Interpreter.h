@@ -31,6 +31,11 @@ namespace Translation
         void visit(const AST::BoolAST &op) override;
 
     private:
+        struct Var;
+        void printVar(Var const& v, bool addNewLine);
+        Var readVar(AST::ValueType const& t);
+
+    private:
         struct Var
         {
             AST::ValueType type;
