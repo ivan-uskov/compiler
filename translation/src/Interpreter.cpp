@@ -13,6 +13,7 @@
 #include "ast/DoubleAST.h"
 #include "ast/ArrayAssignmentAST.h"
 #include "ast/ArrayAccessAST.h"
+#include "ast/BoolAST.h"
 
 #include <stdexcept>
 #include <sstream>
@@ -507,4 +508,9 @@ void Interpreter::visit(ArrayAccessAST const &op)
             throw std::logic_error("invalid var type for access error");
     }
     mStack.push(var);
+}
+
+void Interpreter::visit(BoolAST const &op)
+{
+    mStack.push(Var{AST::ValueType::Bool, 0, op.getValue()});
 }

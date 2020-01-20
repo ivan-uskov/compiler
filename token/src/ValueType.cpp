@@ -38,6 +38,7 @@ namespace Token
             case Token::StringLiteral:    return "stringLiteral";
             case Token::IntLiteral:       return "intLiteral";
             case Token::DoubleLiteral:    return "doubleLiteral";
+            case Token::BoolLiteral:      return "boolLiteral";
 
             case Token::String:           return "string";
             case Token::Return:           return "return";

@@ -17,15 +17,15 @@ println(nums);
 int length;
 length = 10;
 
-int sorted;
-sorted = 0;
+bool notSorted;
+notSorted = true;
 
 int i;
 int tmp;
 
-while (sorted == 0)
+while (notSorted)
 {
-    sorted = 1;
+    notSorted = false;
     i = 0;
     while (i < (length - 1))
     {
@@ -34,7 +34,7 @@ while (sorted == 0)
             tmp = nums[i];
             nums[i] = nums[i + 1];
             nums[i + 1] = tmp;
-            sorted = 0
+            notSorted = true
         };
         i = i + 1
     };

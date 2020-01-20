@@ -34,6 +34,7 @@ namespace Token
     static const Type StringLiteral = Terminal | 0x200u;              // (\'[^\']*\')
     static const Type IntLiteral = Terminal | 0x201u;                 // ([0-9]+)
     static const Type DoubleLiteral = Terminal | 0x202u;              // ([0-9]+\.[0-9]+)
+    static const Type BoolLiteral = Terminal | 0x203u;              // (true|false)
 
     static const Type String = Terminal | 0x301u;                     // string
     static const Type Return = Terminal | 0x302u;                     // return

@@ -24,6 +24,7 @@ namespace AST
         void visit(DoubleAST const &op) override;
         void visit(ArrayAssignmentAST const &op) override;
         void visit(ArrayAccessAST const &op) override;
+        void visit(BoolAST const &op) override;
 
     private:
         std::ostream & mOut;

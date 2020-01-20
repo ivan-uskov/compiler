@@ -15,6 +15,7 @@
 #include "ast/DoubleAST.h"
 #include "ast/ArrayAssignmentAST.h"
 #include "ast/ArrayAccessAST.h"
+#include "ast/BoolAST.h"
 
 using namespace SLR;
 using namespace AST;
@@ -67,6 +68,19 @@ namespace
             }
 
             stack.emplace(new IntAST(tokens[0]));
+        };
+    }
+
+    template<typename T>
+    Rules::Action getBoolASTReducer(T & stack)
+    {
+        return [&stack](auto const& tokens) {
+            if (tokens.size() != 1)
+            {
+                throw std::logic_error("invalid tokens for reduce bool");
+            }
+
+            stack.emplace(new BoolAST(tokens[0]));
         };
     }
 
@@ -358,29 +372,29 @@ Rules::Table ASTBuilder::getRules()
             {Token::StatementList,      {Token::StatementList, Token::Semicolon, Token::Statement}, getExpressionListReducer(mStack)},
             {Token::StatementList,      {Token::Statement}},
 
-            {Token::Statement,          {Token::Double, Token::Id}, getVariableDeclarationASTReducer(mStack, mVariables.top(), AST::ValueType::Double)},
-            {Token::Statement,          {Token::Int, Token::Id}, getVariableDeclarationASTReducer(mStack, mVariables.top(), AST::ValueType::Int)},
-            {Token::Statement,          {Token::String, Token::Id}, getVariableDeclarationASTReducer(mStack, mVariables.top(), AST::ValueType::String)},
-            {Token::Statement,          {Token::Bool, Token::Id}, getVariableDeclarationASTReducer(mStack, mVariables.top(), AST::ValueType::Bool)},
+            {Token::Statement, {Token::Double, Token::Id}, getVariableDeclarationASTReducer(mStack, mVariables.top(), AST::ValueType::Double)},
+            {Token::Statement, {Token::Int, Token::Id}, getVariableDeclarationASTReducer(mStack, mVariables.top(), AST::ValueType::Int)},
+            {Token::Statement, {Token::String, Token::Id}, getVariableDeclarationASTReducer(mStack, mVariables.top(), AST::ValueType::String)},
+            {Token::Statement, {Token::Bool, Token::Id}, getVariableDeclarationASTReducer(mStack, mVariables.top(), AST::ValueType::Bool)},
 
-            {Token::Statement,          {Token::Double, Token::OpenSquareBrace, Token::CloseSquareBrace, Token::Id}, getVariableDeclarationASTReducer(mStack, mVariables.top(), AST::ValueType::DoubleArray)},
-            {Token::Statement,          {Token::Int, Token::OpenSquareBrace, Token::CloseSquareBrace, Token::Id}, getVariableDeclarationASTReducer(mStack, mVariables.top(), AST::ValueType::IntArray)},
-            {Token::Statement,          {Token::String, Token::OpenSquareBrace, Token::CloseSquareBrace, Token::Id}, getVariableDeclarationASTReducer(mStack, mVariables.top(), AST::ValueType::StringArray)},
-            {Token::Statement,          {Token::Bool, Token::OpenSquareBrace, Token::CloseSquareBrace, Token::Id}, getVariableDeclarationASTReducer(mStack, mVariables.top(), AST::ValueType::BoolArray)},
+            {Token::Statement, {Token::Double, Token::OpenSquareBrace, Token::CloseSquareBrace, Token::Id}, getVariableDeclarationASTReducer(mStack, mVariables.top(), AST::ValueType::DoubleArray)},
+            {Token::Statement, {Token::Int, Token::OpenSquareBrace, Token::CloseSquareBrace, Token::Id}, getVariableDeclarationASTReducer(mStack, mVariables.top(), AST::ValueType::IntArray)},
+            {Token::Statement, {Token::String, Token::OpenSquareBrace, Token::CloseSquareBrace, Token::Id}, getVariableDeclarationASTReducer(mStack, mVariables.top(), AST::ValueType::StringArray)},
+            {Token::Statement, {Token::Bool, Token::OpenSquareBrace, Token::CloseSquareBrace, Token::Id}, getVariableDeclarationASTReducer(mStack, mVariables.top(), AST::ValueType::BoolArray)},
 
-            {Token::Statement,            {Token::Id, Token::Equals, Token::Expression}, getAssignmentASTReducer(mStack, mVariables.top())},
+            {Token::Statement, {Token::Id, Token::Equals, Token::Expression}, getAssignmentASTReducer(mStack, mVariables.top())},
 
-            {Token::Statement,            {Token::IdAndOpenSquareBrace, Token::NumberExpression, Token::CloseSquareBrace, Token::Equals, Token::Expression}, getArrayAssignmentASTReducer(mStack, mVariables.top(), true)},
-            {Token::Statement,            {Token::IdAndOpenSquareBrace, Token::CloseSquareBrace, Token::Equals, Token::Expression}, getArrayAssignmentASTReducer(mStack, mVariables.top())},
+            {Token::Statement, {Token::IdAndOpenSquareBrace, Token::NumberExpression, Token::CloseSquareBrace, Token::Equals, Token::Expression}, getArrayAssignmentASTReducer(mStack, mVariables.top(), true)},
+            {Token::Statement, {Token::IdAndOpenSquareBrace, Token::CloseSquareBrace, Token::Equals, Token::Expression}, getArrayAssignmentASTReducer(mStack, mVariables.top())},
+
+            {Token::Statement, {Token::Id, Token::OpenParenthesis,  Token::Expression, Token::CloseParenthesis}, getFunctionCallASTReducer(mStack)},
+
+            {Token::Statement, {Token::If, Token::OpenParenthesis,  Token::BoolExpression, Token::CloseParenthesis,
+                                                Token::OpenBrace, Token::StatementListIf,    Token::CloseBrace}, getIfASTReducer(mStack)},
+            {Token::Statement, {Token::While, Token::OpenParenthesis,  Token::BoolExpression, Token::CloseParenthesis,
+                                                Token::OpenBrace, Token::StatementListWhile, Token::CloseBrace}, getWhileASTReducer(mStack)},
 
             {Token::IdAndOpenSquareBrace, {Token::Id, Token::OpenSquareBrace}},
-
-            {Token::Statement,            {Token::Id, Token::OpenParenthesis,  Token::Expression, Token::CloseParenthesis}, getFunctionCallASTReducer(mStack)},
-
-            {Token::Statement,          {Token::If, Token::OpenParenthesis,  Token::BoolExpression, Token::CloseParenthesis,
-                                                Token::OpenBrace, Token::StatementListIf,    Token::CloseBrace}, getIfASTReducer(mStack)},
-            {Token::Statement,          {Token::While, Token::OpenParenthesis,  Token::BoolExpression, Token::CloseParenthesis,
-                                                Token::OpenBrace, Token::StatementListWhile, Token::CloseBrace}, getWhileASTReducer(mStack)},
 
             {Token::Expression, {Token::NumberExpression}},
             {Token::Expression, {Token::StringExpression}},
@@ -394,10 +408,9 @@ Rules::Table ASTBuilder::getRules()
 
             {Token::BoolExpression, {Token::CompareExpression}},
             {Token::BoolExpression, {Token::BoolExpression1}},
-
+            {Token::BoolExpression1, {Token::BoolLiteral}, getBoolASTReducer(mStack)},
             {Token::BoolExpression1, {Token::Id}, getVariableAccessASTReducer(mStack, mVariables.top(), ValueType::Bool)},
             {Token::BoolExpression1, {Token::BoolExpression2}},
-
             {Token::BoolExpression2, {Token::Id, Token::OpenSquareBrace, Token::NumberExpression, Token::CloseSquareBrace}, getArrayAccessASTReducer(mStack, mVariables.top(), ValueType::Bool)},
 
             {Token::CompareExpression,  {Token::NumberExpression,  Token::Less, Token::NumberExpression}, getCompareBinaryOperatorASTReducer(mStack, CompareBinaryOperatorAST::Type::Less)},
