@@ -1,0 +1,45 @@
+println('program start');
+
+int[] nums;
+nums[] = 5;
+nums[] = 0;
+nums[] = 8;
+nums[] = 2;
+nums[] = 6;
+nums[] = 7;
+nums[] = 1;
+nums[] = 3;
+nums[] = 9;
+nums[] = 4;
+
+println(nums);
+
+int length;
+length = 10;
+
+int sorted;
+sorted = 0;
+
+int i;
+int tmp;
+
+while (sorted == 0)
+{
+    sorted = 1;
+    i = 0;
+    while (i < (length - 1))
+    {
+        if (nums[i] > nums[i + 1])
+        {
+            tmp = nums[i];
+            nums[i] = nums[i + 1];
+            nums[i + 1] = tmp;
+            sorted = 0
+        };
+        i = i + 1
+    };
+    println(nums)
+};
+
+println(nums);
+println('program end')
