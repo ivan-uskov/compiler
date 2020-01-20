@@ -199,3 +199,8 @@ void LLVMCodeGenerator::visit(const AST::ArrayAssignmentAST &op)
 {
     //TODO: impl
 }
+
+void LLVMCodeGenerator::visit(const AST::ArrayAccessAST &op)
+{
+    //TODO: impl
+}

@@ -21,14 +21,14 @@ void run(istream & in, ostream & out)
 
     AST::View av(out);
     ast->accept(av);
-    out << endl;
+    out << endl << endl;
 
     Translation::Interpreter interpreter(in, out);
     ast->accept(interpreter);
     out << endl;
 
     Translation::LLVMCodeGenerator codeGen;
-    out << codeGen.generate(*ast) << endl;
+    codeGen.generate(*ast);
 }
 
 int main()

@@ -15,6 +15,7 @@ namespace AST
     class StringAST;
     class DoubleAST;
     class ArrayAssignmentAST;
+    class ArrayAccessAST;
 
     class IASTVisitor
     {
@@ -33,5 +34,6 @@ namespace AST
         virtual void visit(StringAST const& op) = 0;
         virtual void visit(DoubleAST const& op) = 0;
         virtual void visit(ArrayAssignmentAST const& op) = 0;
+        virtual void visit(ArrayAccessAST const& op) = 0;
     };
 }

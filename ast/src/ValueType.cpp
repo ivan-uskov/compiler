@@ -19,6 +19,16 @@ namespace AST
         return t == ValueType::IntArray || t == ValueType::DoubleArray || t == ValueType::BoolArray || t == ValueType::StringArray;
     }
 
+    bool isTypesMatch(ValueType const& varT, ValueType const& valT)
+    {
+        if (isNumberType(varT) && isNumberType(valT))
+        {
+            return true;
+        }
+
+        return varT == valT;
+    }
+
     ValueType getArrayItemType(ValueType const& t)
     {
         switch (t)

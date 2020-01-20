@@ -24,5 +24,6 @@ namespace AST
     std::string valueTypeToString(ValueType const& t);
     bool isNumberType(ValueType const& t);
     bool isArrayType(ValueType const& t);
+    bool isTypesMatch(ValueType const& varT, ValueType const& valT);
     ValueType getArrayItemType(ValueType const& t);
 }

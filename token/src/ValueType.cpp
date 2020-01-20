@@ -23,8 +23,10 @@ namespace Token
             case Token::NumberExpression:       return "NumExpr";
             case Token::NumberExpression1:      return "NumExpr1";
             case Token::NumberExpression2:      return "NumExpr2";
+            case Token::NumberExpression3:      return "NumExpr3";
             case Token::CompareExpression:   return "CompareExpr";
             case Token::StringExpression:    return "StrExpr";
+            case Token::BoolExpression:    return "BoolExpr";
             case Token::VariableDeclaration: return "VarDecl";
             case Token::IdAndOpenSquareBrace:    return "id[";
 

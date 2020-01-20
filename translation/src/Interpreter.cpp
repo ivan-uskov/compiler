@@ -12,6 +12,7 @@
 #include "ast/StringAST.h"
 #include "ast/DoubleAST.h"
 #include "ast/ArrayAssignmentAST.h"
+#include "ast/ArrayAccessAST.h"
 
 #include <stdexcept>
 #include <sstream>
@@ -461,4 +462,49 @@ void Interpreter::visit(ArrayAssignmentAST const &op)
         default:
             throw std::logic_error("v to arr, unassignable type error");
     }
+}
+
+void Interpreter::visit(ArrayAccessAST const &op)
+{
+    auto valueRetriever = [&](auto & collection) {
+        op.acceptIndex(*this);
+        if (mStack.empty())
+        {
+            throw std::logic_error("invalid stack size for array access");
+        }
+
+        auto index = mStack.top();
+        mStack.pop();
+        if (index.type != ValueType::Int)
+        {
+            throw std::logic_error("invalid index type: " + valueTypeToString(index.type));
+        }
+
+        if (index.intVal < 0 || index.intVal >= collection.size())
+        {
+            throw std::out_of_range(op.getId() + "has not " + std::to_string(index.intVal) + " index");
+        }
+
+        return collection[index.intVal];
+    };
+
+    Var var{op.getResultType()};
+    switch (var.type)
+    {
+        case ValueType::Int:
+            var.intVal = valueRetriever(mScope[op.getId()].intArray);
+            break;
+        case ValueType::String:
+            var.strVal = valueRetriever(mScope[op.getId()].stringArray);
+            break;
+        case ValueType::Bool:
+            var.boolVal = valueRetriever(mScope[op.getId()].boolArray);
+            break;
+        case ValueType::Double:
+            var.doubleVal = valueRetriever(mScope[op.getId()].doubleArray);
+            break;
+        default:
+            throw std::logic_error("invalid var type for access error");
+    }
+    mStack.push(var);
 }

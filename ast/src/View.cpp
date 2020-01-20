@@ -12,6 +12,7 @@
 #include "../StringAST.h"
 #include "../DoubleAST.h"
 #include "../ArrayAssignmentAST.h"
+#include "../ArrayAccessAST.h"
 
 using namespace AST;
 
@@ -116,4 +117,11 @@ void View::visit(ArrayAssignmentAST const &op)
         mOut << op.getId() << "[] = ";
         op.acceptValue(*this);
     }
+}
+
+void View::visit(ArrayAccessAST const &op)
+{
+    mOut << op.getId() << "[";
+    op.acceptIndex(*this);
+    mOut << "]";
 }

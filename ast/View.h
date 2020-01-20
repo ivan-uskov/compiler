@@ -23,6 +23,7 @@ namespace AST
         void visit(StringAST const &op) override;
         void visit(DoubleAST const &op) override;
         void visit(ArrayAssignmentAST const &op) override;
+        void visit(ArrayAccessAST const &op) override;
 
     private:
         std::ostream & mOut;
