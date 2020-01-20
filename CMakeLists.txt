@@ -17,7 +17,7 @@ add_subdirectory(ast)
 add_subdirectory(ast_builder)
 add_subdirectory(translation)
 
-add_executable(${PROJECT_NAME} compiler.cpp parser_tests.cpp parser_tests.h)
+add_executable(${PROJECT_NAME} compiler.cpp)
 
 target_link_libraries(${PROJECT_NAME} token)
 target_link_libraries(${PROJECT_NAME} lexer)

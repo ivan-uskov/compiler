@@ -35,7 +35,6 @@ int main()
 {
     try
     {
-        //testParser();
         run(cin, cout);
     }
     catch (exception const & e)
