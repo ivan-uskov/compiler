@@ -238,9 +238,9 @@ namespace
     }
 
     template<typename T, typename S>
-    Rules::Action getArrayAccessASTReducer(T & stack, S & scope, ValueType t)
+    Rules::Action getArrayAccessASTReducer(T & stack, S & scope)
     {
-        return [&stack, &scope, t] (auto const& tokens) {
+        return [&stack, &scope] (auto const& tokens) {
             if (tokens.size() != 4)
             {
                 throw std::logic_error("invalid tokens for reduce array access");
@@ -258,20 +258,14 @@ namespace
                 throw std::logic_error("invalid type for index on array access: " + valueTypeToString(index->getResultType()));
             }
 
-            ValueType resType = getArrayItemType(scope[id.value]);
-            if (!isTypesMatch(resType, t))
-            {
-                throw std::logic_error("expected type" + valueTypeToString(t) + " occurred array access: " + Token::tokenDescription(id));
-            }
-
-            stack.emplace(new ArrayAccessAST(id, std::move(index), resType));
+            stack.emplace(new ArrayAccessAST(id, std::move(index), getArrayItemType(scope[id.value])));
         };
     }
 
     template<typename T, typename S>
-    Rules::Action getVariableAccessASTReducer(T & stack, S & scope, ValueType t)
+    Rules::Action getVariableAccessASTReducer(T & stack, S & scope)
     {
-        return [&stack, &scope, t](auto const& tokens) {
+        return [&stack, &scope](auto const& tokens) {
             if (tokens.size() != 1)
             {
                 throw std::logic_error("invalid tokens for reduce variable access");
@@ -280,11 +274,6 @@ namespace
             if (scope.find(id.value) == scope.end())
             {
                 throw std::logic_error("trying access to nonexistent variable: " + Token::tokenDescription(id));
-            }
-
-            if (!isTypesMatch(scope[id.value], t))
-            {
-                //throw std::logic_error("expected type" + valueTypeToString(t) + " occurred " + valueTypeToString(scope[id.value]) + " variable: " + Token::tokenDescription(id));
             }
 
             stack.emplace(new VariableAccessAST(id, scope[id.value]));
@@ -389,9 +378,9 @@ Rules::Table ASTBuilder::getRules()
 
             {Token::Statement, {Token::Id, Token::OpenParenthesis,  Token::Expression, Token::CloseParenthesis}, getFunctionCallASTReducer(mStack)},
 
-            {Token::Statement, {Token::If, Token::OpenParenthesis,  Token::BoolExpression, Token::CloseParenthesis,
+            {Token::Statement, {Token::If, Token::OpenParenthesis,  Token::Expression, Token::CloseParenthesis,
                                                 Token::OpenBrace, Token::StatementListIf,    Token::CloseBrace}, getIfASTReducer(mStack)},
-            {Token::Statement, {Token::While, Token::OpenParenthesis,  Token::BoolExpression, Token::CloseParenthesis,
+            {Token::Statement, {Token::While, Token::OpenParenthesis,  Token::Expression, Token::CloseParenthesis,
                                                 Token::OpenBrace, Token::StatementListWhile, Token::CloseBrace}, getWhileASTReducer(mStack)},
 
             {Token::IdAndOpenSquareBrace, {Token::Id, Token::OpenSquareBrace}},
@@ -401,17 +390,9 @@ Rules::Table ASTBuilder::getRules()
             {Token::Expression, {Token::BoolExpression}},
 
             {Token::StringExpression,  {Token::StringLiteral}, getStringASTReducer(mStack)},
-            {Token::StringExpression,  {Token::StringExpression1}},
-            {Token::StringExpression1, {Token::Id}, getVariableAccessASTReducer(mStack, mVariables.top(), ValueType::String)},
-            {Token::StringExpression1, {Token::StringExpression2}},
-            {Token::StringExpression2, {Token::Id, Token::OpenSquareBrace, Token::NumberExpression, Token::CloseSquareBrace}, getArrayAccessASTReducer(mStack, mVariables.top(), ValueType::String)},
 
             {Token::BoolExpression, {Token::CompareExpression}},
-            {Token::BoolExpression, {Token::BoolExpression1}},
-            {Token::BoolExpression1, {Token::BoolLiteral}, getBoolASTReducer(mStack)},
-            {Token::BoolExpression1, {Token::Id}, getVariableAccessASTReducer(mStack, mVariables.top(), ValueType::Bool)},
-            {Token::BoolExpression1, {Token::BoolExpression2}},
-            {Token::BoolExpression2, {Token::Id, Token::OpenSquareBrace, Token::NumberExpression, Token::CloseSquareBrace}, getArrayAccessASTReducer(mStack, mVariables.top(), ValueType::Bool)},
+            {Token::BoolExpression, {Token::BoolLiteral}, getBoolASTReducer(mStack)},
 
             {Token::CompareExpression,  {Token::NumberExpression,  Token::Less, Token::NumberExpression}, getCompareBinaryOperatorASTReducer(mStack, CompareBinaryOperatorAST::Type::Less)},
             {Token::CompareExpression,  {Token::NumberExpression,  Token::More, Token::NumberExpression}, getCompareBinaryOperatorASTReducer(mStack, CompareBinaryOperatorAST::Type::More)},
@@ -429,10 +410,10 @@ Rules::Table ASTBuilder::getRules()
             {Token::NumberExpression2,  {Token::IntLiteral}, getIntASTReducer(mStack)},
             {Token::NumberExpression2,  {Token::DoubleLiteral}, getDoubleASTReducer(mStack)},
 
-            {Token::NumberExpression2,  {Token::Id}, getVariableAccessASTReducer(mStack, mVariables.top(), ValueType::Int)},
+            {Token::NumberExpression2,  {Token::Id}, getVariableAccessASTReducer(mStack, mVariables.top())},
             {Token::NumberExpression2,  {Token::NumberExpression3}},
 
-            {Token::NumberExpression3,  {Token::Id, Token::OpenSquareBrace, Token::NumberExpression, Token::CloseSquareBrace}, getArrayAccessASTReducer(mStack, mVariables.top(), ValueType::Int)}
+            {Token::NumberExpression3,  {Token::Id, Token::OpenSquareBrace, Token::NumberExpression, Token::CloseSquareBrace}, getArrayAccessASTReducer(mStack, mVariables.top())}
     };
 }
 

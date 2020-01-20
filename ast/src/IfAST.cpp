@@ -14,7 +14,10 @@ AST::IfAST::IfAST(std::unique_ptr<IAST> &&cond, std::unique_ptr<IAST> &&stmt)
     : mCond(std::move(cond))
     , mStmt(std::move(stmt))
 {
-
+    if (mCond->getResultType() != ValueType::Bool)
+    {
+        throw std::logic_error("invalid condition type when construct if ast");
+    }
 }
 
 void AST::IfAST::acceptCond(AST::IASTVisitor &v) const

@@ -14,7 +14,10 @@ AST::WhileAST::WhileAST(std::unique_ptr<IAST> &&cond, std::unique_ptr<IAST> &&st
     : mCond(std::move(cond))
     , mStmt(std::move(stmt))
 {
-
+    if (mCond->getResultType() != ValueType::Bool)
+    {
+        throw std::logic_error("invalid condition type when construct while ast");
+    }
 }
 
 void AST::WhileAST::acceptCond(AST::IASTVisitor &v) const
