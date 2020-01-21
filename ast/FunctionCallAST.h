@@ -26,6 +26,7 @@ namespace AST
 
         std::string getName() const;
         ValueType getResultType() const override;
+        ValueType getArgumentType() const;
 
     private:
         std::unique_ptr<IAST> mArg;

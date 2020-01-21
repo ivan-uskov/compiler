@@ -84,3 +84,8 @@ bool AST::FunctionCallAST::isPrintFunctionName(std::string const &name)
 {
     return name == PRINT || name == PRINTLN;
 }
+
+AST::ValueType AST::FunctionCallAST::getArgumentType() const
+{
+    return mArg->getResultType();
+}

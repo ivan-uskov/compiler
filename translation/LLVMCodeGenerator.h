@@ -5,6 +5,7 @@
 
 #include <stack>
 #include <vector>
+#include <map>
 
 #include "begin_llvm.h"
 #include <llvm/IR/Value.h>
@@ -42,13 +43,16 @@ namespace Translation
         llvm::Function * GenerateMainDeclaration();
         void GenerateMainDefinition(llvm::Function &fn, AST::IAST & ast);
 
+        llvm::Value * popStack();
+
     private:
         std::unique_ptr<llvm::LLVMContext> mLLVMContext;
         std::unique_ptr<llvm::Module> mModule;
-        llvm::IRBuilder<> m_builder;
+        llvm::IRBuilder<> mBuilder;
         llvm::Function * mPrint;
 
     private:
+        std::map<std::string, llvm::Value *> mScope;
         std::stack<llvm::Value *> mStack;
     };
 }

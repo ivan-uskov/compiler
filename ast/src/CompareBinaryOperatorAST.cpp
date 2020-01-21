@@ -62,6 +62,16 @@ std::string CompareBinaryOperatorAST::typeToString(CompareBinaryOperatorAST::Typ
     }
 }
 
+ValueType CompareBinaryOperatorAST::getLeftType() const
+{
+    return mLeft->getResultType();
+}
+
+ValueType CompareBinaryOperatorAST::getRightType() const
+{
+    return mRight->getResultType();
+}
+
 namespace AST
 {
     std::ostream & operator << (std::ostream & out, CompareBinaryOperatorAST::Type t)

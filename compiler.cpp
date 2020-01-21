@@ -20,33 +20,74 @@ void run(istream & codeIn, istream & programIn, ostream & out)
     ASTBuilder astBuilder(debug);
     auto ast = astBuilder.build(tokens);
 
-    AST::View av(out);
-    ast->accept(av);
-    out << endl << endl;
-
     Translation::Interpreter interpreter(programIn, out);
     ast->accept(interpreter);
     out << endl;
+}
+
+void view(istream & in, ostream & out)
+{
+    Tokenizer tokenizer(in, out);
+    auto tokens = tokenizer.getTokens();
+
+    ostringstream debug;
+    ASTBuilder astBuilder(debug);
+    auto ast = astBuilder.build(tokens);
+
+    AST::View av(out);
+    ast->accept(av);
+    out << endl << endl;
+}
+
+void compile(istream & in, ostream & out)
+{
+    Tokenizer tokenizer(in, out);
+    auto tokens = tokenizer.getTokens();
+
+    ostringstream debug;
+    ASTBuilder astBuilder(debug);
+    auto ast = astBuilder.build(tokens);
 
     Translation::LLVMCodeGenerator codeGen;
-    codeGen.generate(*ast);
+    out << codeGen.generate(*ast) << endl;
 }
 
 int main(int argc, char *argv[])
 {
     try
     {
-        if (argc != 2)
+        if (argc == 3)
         {
-            throw logic_error("code input param expected");
+            ifstream codeIn(argv[2], std::ifstream::in);
+            if (argv[1] == string("view"))
+            {
+                view(codeIn, cout);
+            }
+            else if (argv[1] == string("run"))
+            {
+                run(codeIn, cin, cout);
+            }
         }
-
-        ifstream codeIn(argv[1], std::ifstream::in);
-        run(codeIn, cin, cout);
+        else if (argc == 2)
+        {
+            if (argv[1] == string("view"))
+            {
+                view(cin, cout);
+            }
+            else
+            {
+                ifstream codeIn(argv[1], std::ifstream::in);
+                run(codeIn, cin, cout);
+            }
+        }
+        else
+        {
+            compile(cin, cout);
+        }
     }
     catch (exception const & e)
     {
-        cout << "ERROR: " << e.what() << endl;
+        cout << "[ERROR]: " << e.what() << endl;
         return 1;
     }
 

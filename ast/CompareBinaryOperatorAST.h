@@ -20,6 +20,8 @@ namespace AST
         Type getType() const;
 
         ValueType getResultType() const override;
+        ValueType getLeftType() const;
+        ValueType getRightType() const;
 
         static std::string typeToString(Type t);
     private:
