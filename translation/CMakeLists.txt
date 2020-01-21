@@ -4,7 +4,7 @@ find_package(LLVM REQUIRED CONFIG)
 
 set(CMAKE_CXX_STANDARD 17)
 
-add_library(${PROJECT_NAME} Interpreter.h src/Interpreter.cpp LLVMCodeGenerator.h src/LLVMCodeGenerator.cpp begin_llvm.h end_llvm.h)
+add_library(${PROJECT_NAME} Interpreter.h src/Interpreter.cpp LLVMCodeGenerator.h src/LLVMCodeGenerator.cpp begin_llvm.h end_llvm.h FakeLLVMCodeGenerator.h src/FakeLLVMCodeGenerator.cpp)
 
 include_directories(${LLVM_INCLUDE_DIRS})
 add_definitions(${LLVM_DEFINITIONS})

@@ -6,7 +6,7 @@
 #include "ast_builder/ASTBuilder.h"
 #include "ast/View.h"
 #include "translation/Interpreter.h"
-#include "translation/LLVMCodeGenerator.h"
+#include "translation/FakeLLVMCodeGenerator.h"
 
 using namespace std;
 using namespace Lexer;
@@ -48,7 +48,7 @@ void compile(istream & in, ostream & out)
     ASTBuilder astBuilder(debug);
     auto ast = astBuilder.build(tokens);
 
-    Translation::LLVMCodeGenerator codeGen;
+    Translation::FakeLLVMCodeGenerator codeGen;
     out << codeGen.generate(*ast) << endl;
 }
 

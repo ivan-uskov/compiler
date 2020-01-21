@@ -63,13 +63,13 @@ namespace AST
             case ValueType::Double:
                 return "double";
             case ValueType::IntArray:
-                return "intArray";
+                return "IntArray";
             case ValueType::BoolArray:
-                return "boolArray";
+                return "BoolArray";
             case ValueType::StringArray:
-                return "stringArray";
+                return "StringArray";
             case ValueType::DoubleArray:
-                return "doubleArray";
+                return "DoubleArray";
             default:
                 return "";
         }
